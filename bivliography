@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mapa_Bibliografía_TFG</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#f4f0e8;font-family:'Georgia',serif;color:#1a1814}
+/* HEADER */
+#hdr{position:fixed;top:0;left:0;right:0;z-index:60;background:#fff;border-bottom:1px solid #ddd8cc;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+#hdr-row1{padding:8px 18px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+#hdr-row2{padding:4px 22px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #f0ece0}
+#htitle{font-size:16px;letter-spacing:2px;text-transform:uppercase;color:#7a6a45;white-space:nowrap;font-style:italic;font-weight:700}
+.hgrp{display:flex;gap:6px;align-items:center}
+.hlab{font-size:12px;color:#9a8870;font-style:italic;white-space:nowrap}
+.fb,.ifb{padding:4px 11px;border-radius:2px;font-size:12px;cursor:pointer;border:1px solid currentColor;font-family:'Georgia',serif;transition:all .15s;letter-spacing:.3px;background:transparent;white-space:nowrap}
+.fb[data-h=all]{color:#4a4030;border-color:#a09070}.fb[data-h=H1]{color:#9a6a10}.fb[data-h=H2]{color:#146058}.fb[data-h=H3]{color:#6a3a98}.fb[data-h=H4]{color:#286040}
+.fb[data-h=all].on{background:#4a4030;color:#fff}.fb[data-h=H1].on{background:#9a6a10;color:#fff}.fb[data-h=H2].on{background:#146058;color:#fff}.fb[data-h=H3].on{background:#6a3a98;color:#fff}.fb[data-h=H4].on{background:#286040;color:#fff}
+.ifb[data-i=all]{color:#4a4030;border-color:#a09070}.ifb[data-i=ALTA]{color:#1a5fa8}.ifb[data-i=MEDIA]{color:#7a5a10}.ifb[data-i=BAJA]{color:#6a6060}
+.ifb[data-i=all].on{background:#4a4030;color:#fff}.ifb[data-i=ALTA].on{background:#1a5fa8;color:#fff}.ifb[data-i=MEDIA].on{background:#7a5a10;color:#fff}.ifb[data-i=BAJA].on{background:#6a6060;color:#fff}
+#search{padding:4px 9px;border:1px solid #c8bfa8;border-radius:2px;font-size:12px;font-family:'Georgia',serif;background:#faf8f3;color:#2a2018;outline:none;width:145px;flex-shrink:1;min-width:80px}
+#search:focus{border-color:#9a6a10}
+#cnt{font-size:12px;color:#9a8870;font-style:italic;white-space:nowrap}
+#rev-info{display:flex;align-items:center;gap:8px;margin-left:10px}
+#rev-cnt{font-size:12px;color:#2a8a4a;font-weight:600;white-space:nowrap}
+#rev-bar{width:80px;height:7px;background:#e8e0d0;border-radius:3px;overflow:hidden}
+#rev-fill{height:100%;background:#2a8a4a;border-radius:3px;transition:width .3s;width:0%}
+#rev-reset{padding:4px 9px;border:1px solid #c8bfa8;border-radius:2px;font-size:12px;font-family:'Georgia',serif;background:#faf8f3;color:#6a5a40;cursor:pointer;white-space:nowrap}
+#rev-reset:hover{background:#f0ece0}
+/* CANVAS */
+#cv{display:block;cursor:grab;position:fixed;top:0;left:0}
+#cv:active{cursor:grabbing}
+/* BLOCK PANEL — left */
+#bpanel{position:fixed;top:0;left:-310px;width:290px;height:100%;background:#fff;border-right:1px solid #d0c8b0;box-shadow:3px 0 16px rgba(0,0,0,.1);z-index:75;display:flex;flex-direction:column;transition:left .28s cubic-bezier(.4,0,.2,1);overflow:hidden}
+#bpanel.open{left:0}
+#bp-head{padding:13px 14px 10px;border-bottom:1px solid #ece8e0;flex-shrink:0;position:relative}
+#bp-title{font-size:12px;font-weight:700;margin-bottom:2px;padding-right:26px}
+#bp-sub{font-size:9.5px;color:#7a6a50;font-style:italic}
+#bp-body{flex:1;overflow-y:auto;padding:10px 14px 16px}
+#bp-body::-webkit-scrollbar{width:3px}
+#bp-body::-webkit-scrollbar-thumb{background:#d0c8b0;border-radius:2px}
+.bclose{position:absolute;top:10px;right:10px;width:20px;height:20px;cursor:pointer;border:1px solid #d0c8b0;border-radius:2px;background:#faf8f3;display:flex;align-items:center;justify-content:center;font-size:10px;color:#6a5a40}
+.bclose:hover{background:#f0ece0}
+.bsec{font-size:7.5px;color:#9a8870;letter-spacing:1.8px;text-transform:uppercase;margin:10px 0 4px;font-style:italic;border-bottom:1px solid #ece8e0;padding-bottom:2px}
+.bsec:first-child{margin-top:0}
+.bval{font-size:10.5px;color:#2a2018;line-height:1.6}
+.bsub{font-size:9.5px;color:#4a4030;margin:3px 0 2px;font-style:italic}
+.bitem{font-size:9.5px;color:#3a3028;line-height:1.55;margin-bottom:3px;padding-left:8px;border-left:2px solid transparent}
+.bitem.si{border-color:#2a8a4a}.bitem.mat{border-color:#c8920a}.bitem.pre{border-color:#c83030}
+.bitem.reviewed{opacity:.45;text-decoration:line-through}
+/* MODAL */
+#overlay{position:fixed;inset:0;background:rgba(15,10,5,.55);z-index:80;display:none;align-items:center;justify-content:center}
+#overlay.show{display:flex}
+#modal{background:#fff;border:1px solid #d0c8b0;border-radius:3px;box-shadow:0 8px 40px rgba(0,0,0,.18);width:min(720px,93vw);max-height:88vh;display:flex;flex-direction:column;animation:mfade .18s ease}
+@keyframes mfade{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+#m-head{padding:14px 16px 12px;border-bottom:1px solid #ece8e0;flex-shrink:0;position:relative}
+#m-autor{font-size:15px;font-weight:700;color:#1a1814;line-height:1.3;padding-right:110px}
+#m-sub{font-size:10px;color:#7a6a50;margin-top:3px;font-style:italic}
+#m-head-actions{position:absolute;top:12px;right:14px;display:flex;align-items:center;gap:6px}
+#m-rev-btn{padding:3px 10px;border-radius:2px;font-size:9.5px;font-family:'Georgia',serif;cursor:pointer;border:1px solid currentColor;transition:all .15s}
+#m-close{width:22px;height:22px;cursor:pointer;border:1px solid #d0c8b0;border-radius:2px;background:#faf8f3;display:flex;align-items:center;justify-content:center;font-size:12px;color:#5a4a30}
+#m-close:hover{background:#f0ece0}
+#m-body{overflow-y:auto;padding:12px 16px 16px;display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+#m-body::-webkit-scrollbar{width:4px}
+#m-body::-webkit-scrollbar-thumb{background:#d0c8b0;border-radius:2px}
+#m-full{grid-column:1/-1}
+.ms{font-size:7.5px;color:#9a8870;letter-spacing:1.8px;text-transform:uppercase;margin:10px 0 3px;font-style:italic;border-bottom:1px solid #ece8e0;padding-bottom:2px}
+.ms:first-child{margin-top:0}
+.mv{font-size:11px;color:#2a2018;line-height:1.65}
+.mref{font-size:10.5px;color:#3a3028;line-height:1.65;font-style:italic;background:#f8f5ee;border-left:3px solid #c8b890;padding:6px 10px;border-radius:0 2px 2px 0}
+.mhips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.mhip{padding:2px 9px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.4px;border:1px solid currentColor}
+.mver{display:inline-block;padding:4px 12px;border-radius:2px;font-size:10px;font-weight:600;margin-top:8px}
+.i-alta{background:#e8f0fc;color:#1a5fa8;border:1px solid #a8c0e8}
+.i-media{background:#fdf6e8;color:#7a5a10;border:1px solid #dfc880}
+.i-baja{background:#f5f3f0;color:#5a5050;border:1px solid #c8c0b8}
+/* LEGEND — draggable, starts bottom right */
+#legend{position:fixed;top:58px;right:16px;z-index:62;background:#fff;border:1px solid #d0c8b0;border-radius:2px;padding:10px 13px;font-size:9.5px;line-height:2;box-shadow:0 2px 8px rgba(0,0,0,.07);cursor:move;user-select:none}
+#legend-grip{font-size:8px;color:#b8b0a0;letter-spacing:2px;text-align:center;margin-bottom:4px;line-height:1}
+.lsec{font-size:7.5px;color:#9a8870;letter-spacing:2px;text-transform:uppercase;margin-top:5px;line-height:1.5;font-style:italic}
+.li{display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* ZOOM */
+#zcont{position:fixed;bottom:16px;right:16px;z-index:60;display:flex;flex-direction:column;gap:4px}
+.zb{width:28px;height:28px;background:#fff;border:1px solid #ccc8b8;color:#4a4030;font-size:14px;cursor:pointer;border-radius:2px;display:flex;align-items:center;justify-content:center}
+.zb:hover{background:#f0ece0}
+/* HOVER LABEL */
+#hlabel{position:fixed;background:rgba(255,255,255,.93);border:1px solid #d0c8b0;border-radius:2px;padding:3px 9px;font-size:9.5px;color:#2a2018;pointer-events:none;display:none;z-index:65;box-shadow:0 2px 6px rgba(0,0,0,.08);font-style:italic}
+/* HINT */
+#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-size:8.5px;color:#b8b0a0;letter-spacing:1.5px;white-space:nowrap;z-index:60;font-style:italic;pointer-events:none}
+/* EXPORT OVERLAY */
+#exp-overlay{position:fixed;inset:0;background:rgba(15,10,5,.6);z-index:90;display:none;align-items:center;justify-content:center}
+#exp-overlay.show{display:flex}
+#exp-box{background:#fff;border:1px solid #d0c8b0;border-radius:3px;box-shadow:0 8px 40px rgba(0,0,0,.2);width:min(680px,92vw);display:flex;flex-direction:column;padding:18px 20px;gap:10px}
+#exp-title{font-size:13px;font-weight:700;color:#2a2018}
+#exp-sub{font-size:10.5px;color:#7a6a50;font-style:italic}
+#exp-ta{width:100%;height:220px;font-family:monospace;font-size:11px;border:1px solid #c8bfa8;border-radius:2px;padding:8px;background:#f8f5ee;color:#1a1814;resize:vertical;outline:none}
+#exp-actions{display:flex;gap:8px;justify-content:flex-end}
+.exp-btn{padding:5px 14px;border-radius:2px;font-size:11px;font-family:'Georgia',serif;cursor:pointer;border:1px solid currentColor}
+#exp-copy{color:#1a5fa8;border-color:#1a5fa8;background:#e8f0fc}
+#exp-copy:hover{background:#d0e4f8}
+#exp-close{color:#6a5a40;border-color:#c8bfa8;background:#faf8f3}
+#exp-close:hover{background:#f0ece0}
+/* EXPORT BUTTON in header */
+</style>
+</head>
+<body>
+<div id="hdr">
+  <div id="hdr-row1">
+    <span id="htitle">Mapa_Bibliografía_TFG</span>
+    <div class="hgrp">
+      <span class="hlab">Hipótesis:</span>
+      <button class="fb on" data-h="all">Todos</button>
+      <button class="fb" data-h="H1">H1</button>
+      <button class="fb" data-h="H2">H2</button>
+      <button class="fb" data-h="H3">H3</button>
+      <button class="fb" data-h="H4">H4</button>
+    </div>
+    <div class="hgrp">
+      <span class="hlab">Importancia:</span>
+      <button class="ifb on" data-i="all">Todos</button>
+      <button class="ifb" data-i="ALTA">★ Alta</button>
+      <button class="ifb" data-i="MEDIA">◆ Media</button>
+      <button class="ifb" data-i="BAJA">· Baja</button>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;flex-shrink:1;min-width:80px">
+      <input id="search" placeholder="Buscar autor, año, keyword…" autocomplete="off" style="width:145px;padding-right:22px">
+      <span id="search-clear" onclick="clearSearch()" style="position:absolute;right:5px;cursor:pointer;font-size:11px;color:#9a8870;display:none;line-height:1;padding:2px">✕</span>
+    </div>
+    <span id="cnt">56 artículos</span>
+    <div id="rev-info">
+      <span id="rev-cnt">✓ 0 / 56 revisados</span>
+      <div id="rev-bar"><div id="rev-fill"></div></div>
+      <button id="rev-reset">↺ Resetear</button>
+    </div>
+  </div>
+</div>
+<canvas id="cv"></canvas>
+
+<!-- EXPORT OVERLAY -->
+<div id="exp-overlay" onclick="if(event.target===this)closeExport()">
+  <div id="exp-box">
+    <div id="exp-title">Exportar posiciones de artículos</div>
+    <div id="exp-sub">Copia este bloque y pégalo donde se indica en el código (o envíaselo a Claude para aplicarlo).</div>
+    <textarea id="exp-ta" readonly spellcheck="false"></textarea>
+    <div id="exp-actions">
+      <button class="exp-btn" id="exp-copy" onclick="copyExport()">Copiar al portapapeles</button>
+      <button class="exp-btn" id="exp-close" onclick="closeExport()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- BLOCK SUMMARY PANEL -->
+<div id="bpanel">
+  <div id="bp-head">
+    <div id="bp-title"></div>
+    <div id="bp-sub"></div>
+    <div class="bclose" onclick="closeBPanel()">✕</div>
+  </div>
+  <div id="bp-body"></div>
+</div>
+
+<!-- MODAL -->
+<div id="overlay" onclick="handleOverlayClick(event)">
+  <div id="modal">
+    <div id="m-head">
+      <div id="m-autor"></div>
+      <div id="m-sub"></div>
+      <div id="m-head-actions">
+        <button id="m-rev-btn" onclick="toggleReviewedFromModal()"></button>
+        <div id="m-close" onclick="closeModal()">✕</div>
+      </div>
+    </div>
+    <div id="m-body"></div>
+  </div>
+</div>
+
+<div id="legend">
+  <div id="legend-grip">⋮⋮</div>
+  <div class="lsec" style="margin-top:0">Importancia</div>
+  <div class="li"><div class="dot" style="background:#1a5fa8"></div>★ Alta</div>
+  <div class="li"><div class="dot" style="background:#7a5a10"></div>◆ Media</div>
+  <div class="li"><div class="dot" style="background:#6a6060"></div>· Baja</div>
+  <div class="lsec">Bloque</div>
+  <div class="li"><div class="dot" style="background:#9a6a10"></div>H1 · Imagen</div>
+  <div class="li"><div class="dot" style="background:#146058"></div>H2 · Confianza</div>
+  <div class="li"><div class="dot" style="background:#6a3a98"></div>H3 · Moderación</div>
+  <div class="li"><div class="dot" style="background:#286040"></div>H4 · Satisfacción</div>
+  <div style="margin-top:5px;font-size:8.5px;color:#9a8870;font-style:italic">⚡ múltiples hipótesis</div>
+  <div style="font-size:8.5px;color:#9a8870;font-style:italic">✓ = revisado &nbsp; clic = detalle</div>
+</div>
+<div id="zcont">
+  <button class="zb" id="zi">+</button>
+  <button class="zb" id="zo">−</button>
+  <button class="zb" id="zr" style="font-size:10px">⟲</button>
+</div>
+<div id="hlabel"></div>
+<div id="hint">óvalo del modelo · clic selecciona, arrastrar mueve &nbsp;&nbsp; círculo artículo · clic detalle &nbsp;&nbsp; scroll · zoom</div>
+
+<script>
+var BC={H1:'#9a6a10',H2:'#146058',H3:'#6a3a98',H4:'#286040',SP:'#8a3a10'};
+var BG={H1:'#fdf0cc',H2:'#c8eee8',H3:'#e8d8f8',H4:'#c8e8d8',SP:'#fdd8b8'};
+var ICL={ALTA:'#1a5fa8',MEDIA:'#7a5a10',BAJA:'#6a6060'};
+var ILB={ALTA:'★ Importancia alta',MEDIA:'◆ Importancia media',BAJA:'· Importancia baja'};
+var ICS={ALTA:'i-alta',MEDIA:'i-media',BAJA:'i-baja'};
+
+var BLOCK_INFO={
+  H1:{title:'Bloque H1 — Imagen Percibida',color:BC.H1,desc:'La imagen percibida del destino de enoturismo es un constructo de <b>segundo orden</b> formado por cinco dimensiones de experiencia del visitante.',hyps:[{id:'H1',lbl:'H1 general',desc:'Imagen percibida = constructo multidimensional (cognitiva + emocional + funcional + hedónica + simbólica).'},{id:'H1a',lbl:'H1a · Cognitiva (PC)',desc:'Cuanto mayor sea la experiencia cognitiva, mejor la imagen percibida.'},{id:'H1b',lbl:'H1b · Emocional (EA)',desc:'Cuanto mayor sea la experiencia emocional positiva, mejor la imagen percibida.'},{id:'H1c',lbl:'H1c · Funcional (BF)',desc:'Cuanto mayor sea la experiencia funcional (conveniencia, eficiencia), mejor la imagen percibida.'},{id:'H1d',lbl:'H1d · Hedónica (HP)',desc:'Cuanto mayor sea la experiencia hedónica (escape, unicidad, placer sensorial), mejor la imagen percibida.'},{id:'H1e',lbl:'H1e · Simbólica (BS)',desc:'Cuanto mayor sea la experiencia simbólica (prestigio, identidad, estatus), mejor la imagen percibida.'}],scales:'PC (5) · EA (5) · BF (5) · HP (5) · BS (5)',note:'Gap teórico: no existe escala validada de imagen multidimensional específica para enoturismo (Sekhniashvili, 2021).'},
+  H2:{title:'Bloque H2 — Confianza del Visitante',color:BC.H2,desc:'La confianza del visitante es un constructo de <b>segundo orden</b> basado en el modelo ABC de Mayer et al. (1995).',hyps:[{id:'H2',lbl:'H2 general',desc:'Confianza = honestidad (TH) + benevolencia (TB) + competencia (TC).'},{id:'H2a',lbl:'H2a · Honestidad (TH)',desc:'A mayor percepción de honestidad (transparencia, sinceridad), mayor confianza.'},{id:'H2b',lbl:'H2b · Benevolencia (TB)',desc:'A mayor percepción de benevolencia (cuidado del bienestar), mayor confianza.'},{id:'H2c',lbl:'H2c · Competencia (TC)',desc:'A mayor percepción de competencia (cultura vitivinícola, capacidad), mayor confianza.'}],scales:'TH (4) · TB (4) · TC (4)',note:'Gap teórico: ningún estudio valida TH+TB+TC específicamente en enoturismo.'},
+  H3:{title:'Bloque H3 — Imagen → Confianza (Moderada)',color:BC.H3,desc:'Una mejor imagen del destino se asocia positivamente con mayor confianza. Relación <b>moderada</b> por FP y PP.',hyps:[{id:'H3',lbl:'H3 — Relación principal',desc:'Imagen percibida → Confianza del visitante (relación positiva directa).'},{id:'H3a',lbl:'H3a · Moderador FP',desc:'La familiaridad percibida modera imagen → confianza. Efecto a priori indeterminado.'},{id:'H3b',lbl:'H3b · Moderador PP',desc:'La reputación percibida modera imagen → confianza. Efecto a priori indeterminado.'}],scales:'FP (5) · PP (5)',note:'La confianza actúa como catalizador: lleva la fuerza de la imagen hacia la satisfacción.'},
+  H4:{title:'Bloque H4 — Confianza → Satisfacción (Moderada)',color:BC.H4,desc:'La confianza influye positivamente en la satisfacción (variable dependiente final). Relación <b>moderada</b> por CAL y RP.',hyps:[{id:'H4',lbl:'H4 — Relación principal',desc:'Confianza del visitante → Satisfacción percibida (relación positiva directa).'},{id:'H4a',lbl:'H4a · Moderador CAL',desc:'La calidad percibida modera confianza → satisfacción. Efecto a priori indeterminado.'},{id:'H4b',lbl:'H4b · Moderador RP',desc:'La lealtad del enoturista modera confianza → satisfacción. Efecto a priori indeterminado.'}],scales:'CAL (5) · RP (5) · SP (5)',note:'Bianchi (2015): confianza NO predice lealtad directamente — mediada por satisfacción. Valida SP como variable final.'},
+};
+
+// Hypothesis nodes — OVALS
+// Layout: world is ~2700 wide × 1150 tall
+// Key separation: PP (H3-mod, right) ≠ H2a (H2-sub, left); CAL (H4-mod, left) ≠ H2c (H2-sub, right)
+// Solution: push H3 moderators LEFT and UP; H4 moderators RIGHT and UP; H2 subs go lower
+var HN=[
+  {id:'H1', lbl:['Imagen','Percibida'],   x:590, y:570, r:56,c:BC.H1,bg:BG.H1,t:'main'},
+  {id:'H1a',lbl:['Cognitiva','(PC)'],      x:275, y:265, r:36,c:BC.H1,bg:BG.H1,t:'sub'},
+  {id:'H1b',lbl:['Emocional','(EA)'],      x:165, y:518, r:36,c:BC.H1,bg:BG.H1,t:'sub'},
+  {id:'H1c',lbl:['Funcional','(BF)'],      x:192, y:800, r:36,c:BC.H1,bg:BG.H1,t:'sub'},
+  {id:'H1d',lbl:['Hedónica','(HP)'],       x:375, y:935, r:36,c:BC.H1,bg:BG.H1,t:'sub'},
+  {id:'H1e',lbl:['Simbólica','(BS)'],      x:590, y:985, r:36,c:BC.H1,bg:BG.H1,t:'sub'},
+  {id:'H2', lbl:['Confianza'],             x:1490,y:570, r:56,c:BC.H2,bg:BG.H2,t:'main'},
+  {id:'H2a',lbl:['Honestidad','(TH)'],     x:1230,y:360, r:36,c:BC.H2,bg:BG.H2,t:'sub'},  // moved down/left
+  {id:'H2b',lbl:['Benevolencia','(TB)'],   x:1490,y:215, r:36,c:BC.H2,bg:BG.H2,t:'sub'},
+  {id:'H2c',lbl:['Competencia','(TC)'],    x:1750,y:360, r:36,c:BC.H2,bg:BG.H2,t:'sub'},  // moved down/right
+  {id:'H3', lbl:['Imagen →','Confianza'],  x:1040,y:455, r:44,c:BC.H3,bg:BG.H3,t:'rel'},
+  {id:'FP', lbl:['Familiaridad','(FP)'],   x:855, y:260, r:32,c:BC.H3,bg:BG.H3,t:'mod'},  // left-of-H3, high
+  {id:'PP', lbl:['Reputación','(PP)'],     x:1000,y:185, r:32,c:BC.H3,bg:BG.H3,t:'mod'},  // above H3, well away from H2a
+  {id:'H3a',lbl:['H3a'],                   x:855, y:700, r:26,c:BC.H3,bg:BG.H3,t:'sub'},
+  {id:'H3b',lbl:['H3b'],                   x:1145,y:700, r:26,c:BC.H3,bg:BG.H3,t:'sub'},
+  {id:'H4', lbl:['Confianza →','Satisf.'], x:1940,y:455, r:44,c:BC.H4,bg:BG.H4,t:'rel'},
+  {id:'CAL',lbl:['Calidad','(CAL)'],       x:1880,y:185, r:32,c:BC.H4,bg:BG.H4,t:'mod'},  // above H4, well away from H2c
+  {id:'RP', lbl:['Lealtad','(RP)'],        x:2080,y:260, r:32,c:BC.H4,bg:BG.H4,t:'mod'},  // right-of-H4, high
+  {id:'H4a',lbl:['H4a'],                   x:1750,y:700, r:26,c:BC.H4,bg:BG.H4,t:'sub'},
+  {id:'H4b',lbl:['H4b'],                   x:2040,y:700, r:26,c:BC.H4,bg:BG.H4,t:'sub'},
+  {id:'SP', lbl:['Satisfacción','(SP)'],   x:2380,y:570, r:56,c:BC.SP,bg:BG.SP,t:'out'},
+];
+var hMap={};HN.forEach(function(n){hMap[n.id]=n;});
+// Oval rx = r * factor (wider than tall)
+function ovalRx(n){return n.t==='main'||n.t==='out'||n.t==='rel'?1.62:1.50;}
+var hCount={};
+
+// ARTICLE DATA — [id, autor, año, pH, hips, imp, met, ctx, res, hallazgos, items, just, ref]
+// imp: 'ALTA' | 'MEDIA' | 'BAJA'
+var AD=[
+  [1,'Castro Analuiza et al.',2020,'H1',['H1','H1e','H3a'],['H1'],'MEDIA',
+   'Metaanálisis (46 artículos, efectos aleatorios, MedCalc)','Turismo general',
+   'Revisa sistemáticamente 46 artículos sobre formación de imagen del destino turístico mediante los tres continuos bipolares de Echtner & Ritchie (1991, 1993).',
+   'La imagen del destino tiene naturaleza multidimensional capturada por tres continuos: atributo-holístico (HP), funcional-psicológico (PC, BF, EA) y común-único (BS, el más significativo). Documenta que la familiaridad con el destino afecta la percepción de imagen, los atributos y la formación de imagen.',
+   'H1 transversal: los tres continuos se corresponden con las cinco dimensiones del TFG. H3a tangencial: la familiaridad modifica la percepción de imagen.',
+   'Referencia de apertura para justificar la multidimensionalidad de H1 y la relevancia de H3a. No produce coeficientes SEM propios.',
+   'Castro Analuiza, J. C., Palacios Pérez, J. M., & Plazarte Alomoto, L. V. (2020). Imagen del destino desde la perspectiva del turista. Turismo y Sociedad, 26, 45–66. https://doi.org/10.18601/01207555.n26.02'],
+  [2,'Joy et al.',2021,'H1',['H1','H1e','H4b'],['H1'],'MEDIA',
+   'Netnografía (análisis cualitativo de 2.540 reseñas TripAdvisor)','Enoturismo (bodegas, Valle de Okanagan, Canadá)',
+   'Analiza reseñas de cuatro bodegas del Valle de Okanagan aplicando el marco de las 4E de Pine & Gilmore (1999) más una quinta dimensión de interacciones sociales.',
+   'Identifica cinco dimensiones de experiencia en bodega (estética, educación, entretenimiento, escapismo e interacciones sociales) que generan impresiones diferenciadas de imagen de marca y expresiones de lealtad. Las interacciones sociales son la aportación original del paper, ausente en Pine & Gilmore.',
+   'H1 general: las 5 dimensiones del TFG tienen equivalencia directa con las 5E del paper (think→PC, act→BF, feel→EA, sense→HP, relate→BS). H1e principal: la dimensión de interacciones sociales valida BS1–BS5 (prestige, status, identity, lifestyle, socially regarded). H4b tangencial: las experiencias se asocian con expresiones de lealtad.',
+   'Enoturismo real, muestra de 2.540 reseñas. Matiz: netnografía sin SEM, no establece causalidad. Usar como evidencia exploratoria y como referencia de que las 5 dimensiones operan en enoturismo real.',
+   'Joy, A., Yoon, S., Grohmann, B., & LaTour, K. (2021). How winery tourism experience builds brand image and brand loyalty. Wine Business Journal. https://doi.org/10.26813/001c.30210'],
+  [9,'Bruwer & Alant',2009,'H1',['H1','H1d','H1e','H4'],['H1'],'ALTA',
+   'Encuesta estructurada + análisis factorial + estadísticos descriptivos','Enoturismo (Paarl Wine Route, Sudáfrica, n=304)',
+   'Paper fundacional de la línea experiencial-hedónica del enoturismo. Aplica el experiential view de Holbrook & Hirschman (1982) al enoturismo para comprender la naturaleza de las motivaciones del enoturista.',
+   'La característica más importante del winescape es la belleza escénica del paisaje; motivaciones son predominantemente hedónicas; la decisión de visitar es generalmente impulsiva; la dinámica primera visita/visita repetida juega un papel clave.',
+   'H1 general: respalda directamente por qué la imagen del destino enoturístico se mide con cinco dimensiones experienciales. H1d principal: justifica HP como dimensión dominante en enoturismo real (HP1-HP2-HP3-HP4-HP5). H4: satisfacción base hedónica y experiencial. H4b: lealtad (revisita, WOM) como consecuencia de la satisfacción hedónica.',
+   'Referencia seminal con más de 400 citas en enoturismo. Establece por primera vez empíricamente la naturaleza hedónica del consumo enoturístico. Fundamento contextual ineludible para H1d.',
+   'Bruwer, J., & Alant, K. (2009). The hedonic nature of wine tourism consumption: An experiential view. International Journal of Wine Business Research, 21(3), 235–257. https://doi.org/10.1108/17511060910985962'],
+  [15,'Bruwer & Lesschaeve',2012,'H1',['H1','H1c','H1d'],['H1'],'ALTA',
+   'Enfoque exploratorio cualitativo-cuantitativo (análisis de frecuencias y Chi-cuadrado)','Enoturismo (Finger Lakes Wine Region, Nueva York, n=334)',
+   'Conceptualiza la imagen percibida de una región enoturística mediante enfoque libre, preguntando a visitantes cuáles son las características o rasgos principales de la región. Las 602 respuestas verbatim se codifican en 8 dimensiones del winescape.',
+   'Las 8 dimensiones del winescape: entorno natural (69.2%), estructuras vitivinícolas (33.3%), productos vínicos (31.5%), factores ambientales (28.6%), señalización y distribución (20.9%), personal de servicio y residentes (13.9%), patrimonio (8.1%), actividades y diversión (7.3%). Valida diferencias entre primerizos/repetidores y locales/foráneos.',
+   'H1 general: confirma que la imagen del destino enoturístico es un constructo multidimensional integrando componentes cognitivos, funcionales, afectivos, hedónicos y simbólicos. H1c: dimensión 6 (personal de servicio) valida BF4 y BF2. H1d: dimensiones 1 y 8 (paisaje sensorial, actividades) validan HP. H1e: dimensión 3 (productos únicos, reputación regional) valida BS.',
+   'Específico de enoturismo, modelo del winescape ampliamente citado. Justifica que BF, HP y BS son dimensiones constitutivas y empíricamente observables de la imagen en destinos vinícolas.',
+   'Bruwer, J., & Lesschaeve, I. (2012). Wine tourists\' destination region brand image perception and antecedents: Conceptualization of a winescape framework. Journal of Travel & Tourism Marketing, 29(7), 611–628. https://doi.org/10.1080/10548408.2012.719819'],
+  [55,'Sekhniashvili',2021,'H1',['H1','H2','H3','H4'],['H1','H2','H3','H4'],'ALTA',
+   'Revisión bibliográfica sistemática (2001–2020)','Enoturismo',
+   'Actualiza y sintetiza la investigación sobre imagen de destinos de enoturismo publicada entre 2001 y 2020, identificando el estado del arte, los métodos predominantes y las brechas de investigación.',
+   'La imagen percibida afecta la toma de decisiones de viaje y la satisfacción. El winescape se define como sistema de creencias, percepciones, pensamientos, sentimientos, ideas, expectativas y conocimientos. No existe ninguna escala uniforme válida y generalmente aceptada para medir la imagen del destino de enoturismo.',
+   'H1 general: legitima la centralidad del constructo imagen en enoturismo. Las cinco dimensiones del TFG son componentes legítimos y necesarios del WTDI. Identifica el gap de investigación que el TFG cubre directamente.',
+   'Es la referencia clave para justificar la aportación original del TFG ante la tutora: el modelo del TFG responde exactamente a la laguna que Sekhniashvili identifica. Citar en introducción y justificación del problema de investigación.',
+   'Sekhniashvili, G. (2021). A review of wine tourism destination image studies from 2001 to 2020. GeoJournal of Tourism and Geosites, 37(3), 757–767. https://doi.org/10.30892/gtg.37304-706'],
+  [56,'Alebaki et al.',2015,'H1',['H1','H2','H3','H4'],['H1','H2','H3','H4'],'MEDIA',
+   'PCA con rotación VARIMAX + Regresión jerárquica múltiple','Enoturismo (norte de Grecia, n=381, 12 bodegas)',
+   'Propone y testa un marco multidimensional para comprender el comportamiento del enoturista integrando motivaciones, implicación con el producto (wine involvement) y perfil del visitante.',
+   'PCA extrae 7 factores motivacionales (60.8% varianza explicada): F1-Experiencia educativa, F2-Socialización, F3-Atractivo del destino, F4-Producto core del vino, F5-Estética del viñedo (M=3.8, el más alto), F6-Familiaridad, F7-Reputación y novedad. El wine involvement es el mejor predictor de las motivaciones.',
+   'H1 general: confirma multidimensionalidad del comportamiento del enoturista en contexto europeo. H1d: F5 Vineyard aesthetics cubre HP1-HP2-HP5. H1a: F1 Educational cubre PC2-PC4. H1e: F7 Reputation cubre BS1-BS2; Identity predictor cubre BS3-BS4. H3a tangencial: F6 Familiarity y Past experience como predictores condicionantes.',
+   'Valida que un modelo multidimensional como el del TFG es metodológicamente coherente con la complejidad real del enoturismo europeo. No testa relaciones causales entre los constructos centrales del TFG.',
+   'Alebaki, M., Menexes, G., & Koutsouris, A. (2015). Developing a multidimensional framework for wine tourist behavior: Evidence from Greece. Wine Economics and Policy, 4(2), 98–109. https://doi.org/10.1016/j.wep.2015.11.002'],
+  [22,'Madeira et al.',2019,'H1a',['H1a','H4'],['H1a'],'ALTA',
+   'EFA + CFA + SEM con mínimos cuadrados generalizados (GLS)','Enoturismo (Lisboa, Portugal)',
+   'Propone y testa un modelo conceptual para entender qué impulsa a los turistas a visitar una región vinícola emergente y cómo esa experiencia mejora la imagen del destino y la satisfacción. Trabaja con 6 dimensiones (vino, personal, cellar door, entretenimiento, educación, estética). Ajuste: χ²/df=2.14, GFI=0.82, CFI=0.90, RMSEA=0.06.',
+   'Primer SEM aplicado al enoturismo. Confirma la cadena experiencia → imagen → satisfacción. La dimensión estética (atributos físicos, accesibilidad, entorno paisajístico) y educación son componentes constitutivos de la imagen percibida del destino enoturístico.',
+   'H1a principal: dimensión estética cubre PC1-PC3-PC5; dimensión educación cubre PC2-PC4. H4: cadena experiencia → imagen → satisfacción con hipótesis explícita (H9 en el paper).',
+   'Metodológicamente el más relevante para H1a: mismo método (SEM), mismo contexto (enoturismo), misma dirección causal. Es la referencia de mayor peso para justificar H1a con evidencia empírica directa.',
+   'Madeira, A., Correia, A., & Filipe, J. A. (2019). Modelling wine tourism experiences. Anatolia, 30(4), 513–529. https://doi.org/10.1080/13032917.2019.1642922'],
+  [23,'Guan et al.',2023,'H1a',['H1a','H1b'],['H1a'],'ALTA',
+   'PLS-SEM (SmartPLS 4.0) + EFA + CFA + constructos de orden superior (HOC)','Turismo general (Qingzhou, China, n=542)',
+   'Amplía el marco clásico cognición → afección → imagen global introduciendo la calidad de la experiencia como mediador entre cognición y afección. Todas las hipótesis confirmadas.',
+   'La cognición (evaluación de atributos físicos y funcionales del destino) influye directa y positivamente en la imagen global. La cadena cognición → calidad de experiencia → afección tiene efecto mediador secuencial significativo (β=0.039, p<0.05). La afección también influye positivamente en la imagen.',
+   'H1a principal: cognición → imagen global confirmada con PLS-SEM. Los ítems cognitivos del paper (seguridad, información, transporte, actividades) son equivalentes a PC1-PC2-PC3-PC4. H1b: afección → imagen también confirmada simultáneamente.',
+   'Valida la doble vía cognitiva-emocional → imagen que subyace a la estructura H1a+H1b del TFG, con evidencia de que ambas dimensiones son complementarias y no independientes.',
+   'Guan, L.-P., Ayob, N., Puah, C.-H., & Arip, M. A. (2023). Destination image mediated by experience quality: The residents\' perspective. Asian Journal of Business Research, 13(3). https://doi.org/10.14707/ajbr.230156'],
+  [24,'Trang et al.',2022,'H1a',['H1a','H1d','H1b'],['H1a'],'MEDIA',
+   'Métodos mixtos (fase cualitativa de desarrollo de escala + fase cuantitativa de validación CFA)','Turismo general',
+   'Amplía el modelo bidimensional clásico de imagen (cognitiva + afectiva) incorporando la imagen multisensorial como tercera dimensión. Verifica la validez nomológica de la nueva escala en la predicción de satisfacción y lealtad.',
+   'La imagen del destino tiene estructura tri-dimensional: cognitiva + afectiva + multisensorial. La imagen multisensorial tiene una conexión más estrecha con la imagen afectiva que con la cognitiva. La imagen sensorial mejora además la percepción de calidad.',
+   'H1a: la evaluación cognitiva de los atributos del destino es una dimensión constitutiva y empíricamente validada de la imagen global. H1d: HP5 (pleasure for my senses) es el ítem de anclaje entre la dimensión cognitiva sensorial y la hedónica. Conexión indirecta con CAL a través de la percepción de calidad.',
+   'Matiz importante: en este paper la cognición es dimensión constitutiva de la imagen, no un antecedente causal. Su uso correcto es justificar que el constructo PC es una dimensión reconocida de la imagen del destino. No citar como evidencia de la relación causal PC → imagen.',
+   'Trang, N. T., Yoo, J. J.-E., Joo, D., & Lee, G. (2022). Incorporating senses into destination image. Journal of Destination Marketing & Management, 26, 100760. https://doi.org/10.1016/j.jdmm.2022.100760'],
+  [25,'Kutlu & Ayyildiz',2021,'H1a',['H1a','H1d'],['H1a'],'BAJA',
+   'EFA + CFA + análisis de regresión jerárquica','Turismo general (Antalya, Turquía)',
+   'Investiga el impacto de la imagen del destino sobre la experiencia turística memorable (MTE) y el efecto posterior de la MTE sobre la intención de revisita. La imagen del destino se describe en cuatro dimensiones cognitivas.',
+   'Las cuatro dimensiones cognitivas de la imagen (atracciones naturales, culturales, infraestructura turística e infraestructura general) son componentes constitutivos de la imagen. Esas dimensiones influyen positiva y significativamente sobre el hedonismo como dimensión de la MTE.',
+   'H1a: confirma que las dimensiones cognitivas del destino son componentes constitutivos de la imagen (PC1-PC5 cubiertos). H1d conexión secundaria: imagen → hedonismo (MTE). ⚠️ RELACIÓN INVERTIDA: imagen → hedonismo, no hedonismo → imagen.',
+   '⚠️ PRECAUCIÓN: La relación cognitiva-imagen va en dirección invertida (imagen→experiencia). Su uso correcto es señalar el vínculo entre dimensiones cognitivas e imagen, aclarando que el TFG adopta la dirección contraria, coherente con Madeira et al. (2019).',
+   'Kutlu, D., & Ayyıldız, H. (2021). The role of the destination image in creating memorable tourism experience. Journal of Tourism and Services, 12(23), 199–216. https://doi.org/10.29036/jots.v12i23.303'],
+  [16,'Suban',2024,'H1b',['H1b','H4'],['H1b'],'ALTA',
+   'SEM','Turismo de spa (Sri Lanka)',
+   'Propone y testa un modelo que examina cómo emociones específicas del visitante (joy, love y positive surprise) predicen la imagen del destino, la satisfacción y las intenciones conductuales (revisita y recomendación). Emociones medidas con la DES de Hosany & Gilbert (2010).',
+   'Las tres emociones influyen significativamente en la imagen percibida del destino. La imagen media parcialmente la relación emociones → satisfacción (β=0.67 para imagen → satisfacción, explicando el 47.7% de la varianza en satisfacción). Todas las hipótesis soportadas.',
+   'H1b principal: joy, love y positive surprise → imagen percibida. Joy = EA1-EA2; love = EA3-EA4; surprise = EA5.',
+   'SEM confirmado con cadena emociones → imagen → satisfacción completa. Es la evidencia más directa disponible de que las emociones positivas del visitante influyen significativamente en la imagen percibida del destino.',
+   'Suban, S. A. (2024). Visitor\'s emotional experience in predicting destination image, satisfaction and intention to revisit: A spa tourism perspective. International Hospitality Review, 38(2), 355–376. https://doi.org/10.1108/ihr-05-2023-0032'],
+  [17,'Kara et al.',2025,'H1b',['H1b','H1d'],['H1b'],'MEDIA',
+   'CFA + SEM con máxima verosimilitud','Turismo ferroviario temático (Çankırı Salt Express, Turquía, n=221)',
+   'Examina cómo las dimensiones de la experiencia emocional del visitante (estética, entretenimiento y escapismo) influyen en la satisfacción con el destino y cómo ésta determina las intenciones conductuales (revisita y recomendación).',
+   'Las experiencias estéticas (β=0.48, t=4.30, p<0.001) y de entretenimiento (β=0.39, t=4.28, p<0.001) son determinantes significativos de la satisfacción. El escapismo no resultó significativo en este contexto. La satisfacción predice intenciones conductuales.',
+   'H1b: las dimensiones emocionales estética y entretenimiento son predictores de la satisfacción global. EA1-EA2-EA4 (entretenimiento); EA3-EA5 (estética). H1d tangencial: el escapismo (HP1-HP2) se menciona como dimensión motivacional aunque no significativa aquí.',
+   'Matiz: el paper no modela explícitamente la relación experiencia emocional → imagen del destino. La imagen no aparece como constructo. El argumento para H1b es que las dimensiones emocionales predicen la evaluación global del destino (satisfacción), que en el modelo del TFG es consecuencia de la imagen percibida.',
+   'Kara, M., Sürücü, Ç., & Akbaş, Y. Z. (2025). The relationship between visitors\' emotional experience, satisfaction and behavioural intentions: The case of Çankırı Salt Express. Turizm Akademik Dergisi, 12(2), 371–386. https://dergipark.org.tr/en/download/article-file/4678200'],
+  [18,'Prayag et al.',2017,'H1b',['H1b','H3'],['H1b'],'ALTA',
+   'SEM con máxima verosimilitud (AMOS)','Turismo mediterráneo europeo (Cerdeña, Italia, n=275)',
+   'Testa un modelo integrador que vincula las experiencias emocionales del turista (medidas con la DES: joy, love y positive surprise) con la imagen global percibida, la satisfacción y la intención de recomendar. Publicado en Journal of Travel Research (Q1).',
+   'Joy (β=0.435, p<0.001) y love (β=0.256, p<0.001) son antecedentes significativos y directos de la imagen global (R²=0.255). Positive surprise no tiene efecto significativo sobre imagen. La imagen global influye directamente en la satisfacción (β=0.782, p<0.001), explicando junto con las emociones el 74.6% de la varianza en satisfacción (R²=0.746).',
+   'H1b principal: joy→imagen (β=0.435) y love→imagen (β=0.256). Los ítems joy (EA1-EA4) y love (EA3-EA4) son los predictores más potentes. H4: imagen→satisfacción (β=0.782). EA5 (stimulating, equivalente a positive surprise) podría operar más sobre satisfacción que sobre imagen directamente.',
+   'Q1 Journal of Travel Research. SEM. Contexto europeo mediterráneo cercano al TFG. Referencia de mayor peso para H1b: establece que joy y love son los predictores más fuertes de imagen y que los efectos emocionales son diferenciales (no deben colapsarse en una única dimensión).',
+   'Prayag, G., Hosany, S., Muskat, B., & Del Chiappa, G. (2017). Understanding the relationships between tourists\' emotional experiences, perceived overall image, satisfaction, and intention to recommend. Journal of Travel Research, 56(1), 41–54. https://doi.org/10.1177/0047287515620567'],
+  [19,'Ferreira et al.',2025,'H1b',['H1b'],['H1b'],'ALTA',
+   'PLS-SEM (SmartPLS 4.0) + Análisis Multigrupo (MGA)','Turismo patrimonial, Patrimonio UNESCO (Porto, Portugal)',
+   'Identifica qué emociones específicas del turista desencadenan la imagen percibida del destino y afectan la recomendación boca a boca. Compara visitantes con distinta duración de estancia y número de visitas previas. Publicado en International Journal of Tourism Research (Q1).',
+   'La emoción de felicidad es el predictor más potente de imagen (β=0.610, p<0.001). El MGA demuestra que los visitantes repetidores NO presentan respuesta emocional estadísticamente diferente de los primerizos (invarianza del modelo). Love, surprise y fear no resultan significativos.',
+   'H1b principal: felicidad (happiness) → imagen percibida (β=0.610). EA1-EA3-EA4 (entretenido, agradable, alegre) se corresponden con happiness. H3a: la invarianza del modelo multigrupo apoya el a priori indeterminado de FP como moderador: la familiaridad no modera la relación emociones→imagen en contexto patrimonial.',
+   'Q1 IJTR. PLS-SEM+MGA. Contexto ibérico muy próximo al TFG. Clave para H3a: la invarianza del multigrupo es evidencia directa de que la familiaridad puede NO moderar, apoyando el planteamiento del TFG de a priori indeterminado.',
+   'Ferreira, D. F. S., da Costa, R. A., Chim-Miki, A. F., & Kozak, M. (2025). What emotions trigger the perceived destination image and word-of-mouth recommendation in World Heritage Sites? International Journal of Tourism Research, 28(1), e70065. https://doi.org/10.1002/jtr.70065'],
+  [20,'Guerreiro et al.',2025,'H1b',['H1b','H1a','H1c','H1d','H1e','H4'],['H1b'],'ALTA',
+   'EFA + SEM','Turismo (Algarve, Portugal, n=2.709)',
+   'Extiende el concepto de imagen del destino introduciendo la imagen experiencial (imagen holística que el turista forma durante la visita) y testa su formación a partir de las cinco dimensiones de Schmitt (1999): feel, sense, think, act, relate. Publicado en Journal of Vacation Marketing (Q2, Sage).',
+   'Las dimensiones afectivas (feel y sense) predicen significativamente la imagen afectiva (joyful y glamorous). La imagen experiencial predice satisfacción (β=0.61) y lealtad (β=0.48). Todas las hipótesis H1a–H5b confirmadas. Es el mayor n de toda la revisión (n=2.709).',
+   'H1b principal: dimensiones emocionales-afectivas de Schmitt equivalentes a EA (joyful→EA1-EA2-EA4; glamorous→EA3-EA5). H1 transversal: el modelo de las 5 dimensiones de Schmitt tiene correspondencia directa con las 5 dimensiones del TFG (think→PC, act→BF, feel→EA, sense→HP, relate→BS). H4: imagen experiencial→satisfacción→lealtad.',
+   'El más robusto del bloque por tamaño muestral (n=2.709). Respaldo conceptual para la distinción imagen experiencial vs. imagen preformada, directamente útil para la redacción del TFG. Ofrece el concepto de imagen experiencial como encuadre teórico del modelo.',
+   'Guerreiro, M., Pinto, P., deMatos, N., Bagheri, F., Sequeira, B. D., & Parra, A. (2025). Unveiling the impacts of tourist experiences on experiential image, satisfaction, and loyalty: A study in Algarve, a European premier beach destination. Journal of Vacation Marketing. Advance online publication. https://doi.org/10.1177/13567667251335045'],
+  [21,'Manojlović et al.',2025,'H1b',['H1b','H4'],['H1b'],'BAJA',
+   'Análisis descriptivo','Turismo cultural (Montenegro)',
+   'Explora los efectos de la experiencia de turismo cultural en el comportamiento del turista, con foco en las dimensiones emocional, social y sensorial.',
+   'Las dimensiones emocional, social y sensorial de la experiencia turística están asociadas con evaluaciones positivas del destino y comportamientos de revisita. Metodología poco detallada.',
+   'H1b: dimensión emocional → evaluaciones positivas del destino (análogo a imagen).',
+   'Matiz: metodología poco detallada y revista de bajo impacto (SAGE Open). Solo como referencia de apoyo secundaria.',
+   'Manojlović, M., Stanovčić, T., & Perović, Đ. (2025). Effects of cultural tourism experience on tourist behavior: Insights from Montenegro. SAGE Open, 15(4). https://doi.org/10.1177/21582440251397318'],
+  [12,'Hosany & Gilbert',2010,'H1b',['H1b','H1d'],['H1b'],'ALTA',
+   'Desarrollo de escala (DES) + CFA','Turismo general (múltiples destinos)',
+   'Desarrolla y valida la Destination Emotion Scale (DES), la escala de referencia para medir emociones del turista en destinos turísticos.',
+   'La DES queda conformada por tres dimensiones: joy (alegría/entretenimiento), love (afecto/agrado) y positive surprise (estimulación/sorpresa positiva). Validada psicométricamente con CFA en múltiples muestras. Prayag et al. (2017) la aplica demostrando que joy y love son los más potentes predictores de imagen.',
+   'H1b: DES es la fuente directa de EA1 (entertaining=joy), EA2 (lively=joy), EA3 (pleasant=love), EA4 (cheerful=love), EA5 (stimulating=positive surprise). H1d tangencial: la dimensión joy tiene componente hedónico.',
+   'Artículo FUNDACIONAL de la escala EA1–EA5 del TFG. CITAR OBLIGATORIAMENTE para justificar los ítems emocionales. Sin este paper no hay justificación psicométrica de las escalas de EA.',
+   'Hosany, S., & Gilbert, D. (2010). Measuring tourists\' emotional experiences toward hedonic holiday destinations. Journal of Travel Research, 49(4), 513–526. https://doi.org/10.1177/0047287509349267'],
+  [13,'Fait et al.',2016,'H1c',['H1c','H1b'],['H1c'],'BAJA',
+   'Análisis de contenido web + text mining + análisis de gap','Enoturismo (Burdeos, Toscana, Napa Valley — webs DMOs y 100 blogs internacionales)',
+   'Analiza la brecha entre la imagen comunicada por los gestores de destinos enoturísticos (DMOs) y la imagen percibida y transmitida por terceros (bloggers) en tres destinos de excelencia. Aplica un modelo de text mining sobre contenido web.',
+   'En Napa Valley, los atributos funcionales son los elementos centrales sobre los que el visitante construye su percepción inicial del destino. Los atributos funcionales tangibles y de servicio forman parte de la imagen del destino enoturístico. Hay brecha entre la imagen proyectada y la percibida en algunos destinos.',
+   'H1c: confirma en contexto enoturístico que la dimensión funcional existe y es medible en la imagen de destinos vinícolas. BF1-BF5 tienen equivalencia con los atributos funcionales identificados.',
+   'Matiz: análisis de contenido web, no testa causalmente BF → imagen mediante SEM. Su valor es como referencia de contexto enoturístico que confirma que la dimensión funcional existe y es medible. Combinar con Sirgy & Su (2000) para justificación teórica y Guan et al. (2023) para evidencia causal.',
+   'Fait, M., Scorrano, P., Cavallo, F., & Iaia, L. (2016). Wine tourism destination image on the web: A comparison between conveyed and perceived communication drivers. Journal for International Business and Entrepreneurship Development, 9(2), 169–189. https://www.innotourclust.eu/wp-content/uploads/2021/03/Wine-tourism-destination-image-on-the-web.pdf'],
+  [14,'Barbierato et al.',2022,'H1c',['H1c','H1b'],['H1c'],'ALTA',
+   'Análisis de sentimiento (AFINN) + NLP con análisis de co-ocurrencia (KH Coder 3)','Enoturismo (Hunter Valley, Mendoza, Napa Valley, Stellenbosch, Toscana — n=89.672 reseñas TripAdvisor de 1.074 bodegas)',
+   'Es el estudio con mayor muestra existente en la literatura de enoturismo. Analiza qué atributos generan evaluaciones positivas y negativas en los cinco destinos de enoturismo más desarrollados del mundo.',
+   'Los issues más ligados a la calidad de servicio y fallos de servicio son (en orden de importancia): calidad del producto vino principal, experiencia en sala de cata, tours organizados, empatía del personal, fiabilidad del personal, y entorno de la bodega. El personal ("friendly", "knowledgeable") está presente como tema universal en todos los destinos.',
+   'H1c principal: las dimensiones funcionales son los atributos más determinantes de la evaluación global. BF4 (attentive to visitors) = empatía/fiabilidad del personal; BF2 (efficient) = fiabilidad del personal; BF3+BF5 = experiencia en sala de cata; BF1+BF5 = tours organizados. H1b uso terciario: el lenguaje evaluativo positivo está dominado por adjetivos de carga emocional (wonderful, fantastic, amazing) → EA.',
+   'Mayor base de datos empírica del TFG (n=89.672 reseñas, 5 países, 1.074 bodegas). La primacía de lo funcional en enoturismo real es el hallazgo central que justifica la inclusión y relevancia de H1c. No usa SEM pero la magnitud muestral compensa metodológicamente.',
+   'Barbierato, E., Bernetti, I., & Capecchi, I. (2022). What went right and what went wrong in my cellar door visit? A worldwide analysis of TripAdvisor\'s reviews of wineries & vineyards. Wine Economics and Policy, 11(1), 47–72. https://doi.org/10.36253/wep-10871'],
+  [4,'Chen et al.',2016,'H1e',['H1e','H1c'],['H1e'],'ALTA',
+   'PLS-SEM','Turismo patrimonial (Angkor Wat, Camboya)',
+   'Modela el consumo funcional y simbólico como antecedentes diferenciados de la evaluación del destino patrimonial (satisfacción y apego) y de la lealtad. Demuestra que los efectos del consumo simbólico y experiencial son mayores que los del funcional.',
+   'Todos los tipos de consumo tienen efectos positivos y significativos sobre el apego y la satisfacción, que a su vez predicen lealtad. El consumo funcional tiene mayor peso en la evaluación general; el simbólico, mayor peso en la intención de revisita.',
+   'H1c: consumo funcional → evaluación destino (BF1-BF5 cubiertos: conveniencia, eficiencia, adecuación). H1e: consumo simbólico → evaluación destino (BS1-BS5 cubiertos: prestige, status, identity, lifestyle). Doble validación H1c+H1e con PLS-SEM en un solo estudio. H4 tangencial: satisfacción y apego como variables de resultado.',
+   'PLS-SEM con doble validación H1c+H1e simultánea. Proporciona la evidencia causal empírica que otros estudios de H1c no aportan. La cadena de citación correcta para H1c es: Sirgy & Su (2000) para justificación teórica + Barbierato et al. (2022) para identificar dimensiones funcionales salientes + Chen et al. (2016) para evidencia causal SEM.',
+   'Chen, H., & Rahman, I. (2016). Cultural tourism and an examination of tourist satisfaction and revisit intentions: Exploring destination loyalty in the context of a functional and symbolic model. Journal of Global Business and Technology, 12(2), 77–96.'],
+  [6,'Sirgy & Su',2000,'H1c',['H1c','H1e'],['H1c'],'ALTA',
+   'Teórico-conceptual','Turismo general',
+   'Propone un modelo teórico integrador que articula las relaciones entre el entorno del destino, la imagen del destino, el autoconcepto del turista, la congruencia simbólica (self-congruity) y la congruencia funcional (functional congruity) como determinantes del comportamiento de viaje. Publicado en Journal of Travel Research (Q1, >1000 citas).',
+   'La congruencia funcional (ajuste entre atributos utilitarios del destino y expectativas ideales del turista) y la self-congruity (ajuste entre imagen del destino y autoconcepto del turista) son las dos dimensiones diferenciadas que constituyen la imagen percibida y predicen el comportamiento de viaje. El entorno del destino influye en la formación de la imagen y en los atributos utilitarios percibidos.',
+   'H1c: functional congruity = BF como dimensión de imagen. BF1 (convenient), BF2 (efficient), BF3 (suitable for my needs), BF4 (attentive to visitors), BF5 (offers what I am looking for) operacionalizan ese ajuste funcional percibido. H1e: self-congruity (symbolic) = BS como dimensión de imagen. BS1-BS5 operacionalizan el ajuste entre imagen del destino y autoconcepto.',
+   'Artículo fundacional con más de 1.000 citas. Q1 Journal of Travel Research. No usa SEM, pero es el origen conceptual canónico de los constructos BF y BS. Citar en la justificación teórica de H1c y H1e como paper madre.',
+   'Sirgy, M. J., & Su, C. (2000). Destination image, self-congruity, and travel behavior: Toward an integrative model. Journal of Travel Research, 38(4), 340–352. https://doi.org/10.1177/004728750003800402'],
+  [8,'Bruwer & Rueger-Muck',2019,'H1d',['H1d'],['H1d'],'MEDIA',
+   'Cuantitativa descriptiva (análisis de frecuencias, comparación de medias, tests de significación)','Enoturismo (Barossa Valley, Australia, n=513)',
+   'Adopta el experiential view de Holbrook & Hirschman (1982) para examinar la naturaleza de las motivaciones del enoturista, determinando el efecto de los factores del destino (características percibidas, visitas previas, comportamiento de compra y cohortes generacionales) sobre la experiencia hedónica.',
+   'La característica más importante del winescape es la belleza escénica del paisaje. Las motivaciones son predominantemente hedónicas. El factor hedónico opera en un contexto altamente social (pareja, familia, amigos). La decisión de visitar es generalmente impulsiva.',
+   'H1d principal: HP1-HP2-HP3-HP4-HP5 operacionalizan exactamente el núcleo motivacional hedónico del enoturista identificado en el paper (placer, escape de rutina, experiencias únicas, inmersión sensorial).',
+   'Es la referencia de autoridad en la literatura enoturística para justificar que la experiencia hedónica es la dimensión dominante de la visita al destino vinícola. No modela HP → imagen con SEM, pero justifica que HP es una dimensión propia, relevante y dominante en enoturismo.',
+   'Bruwer, J., & Rueger-Muck, E. (2019). Wine tourism and hedonic experience: A motivation-based experiential view. Tourism and Hospitality Research, 19(4), 488–502. https://doi.org/10.1177/1467358418781444'],
+  [10,'Zhu et al.',2025,'H1d',['H1d'],['H1d'],'ALTA',
+   'SEM (SPSS 27.0 + AMOS 26.0)','Turismo rural (Yumingzui Village, Qingdao, China, n=489)',
+   'Basado en el marco SOR (Estímulo-Organismo-Respuesta), investiga cómo las cualidades restauradoras percibidas del destino de turismo rural afectan al bienestar del turista (experiencia hedónica y eudaimónica), y a través de éste a la imagen del destino y la lealtad. Excelente ajuste: χ²/df=1.381, TLI=0.973, CFI=0.976, RMSEA=0.028.',
+   'La experiencia hedónica tiene efecto positivo y significativo sobre la imagen del destino (β=0.211, t=2.703, p<0.01). El impacto de lo hedónico sobre imagen y lealtad es mayor que el de la experiencia eudaimónica. La imagen del destino NO predice significativamente la lealtad (β=0.087, p>0.05), lo que sugiere que los factores hedónicos pesan más que la evaluación cognitiva de imagen en turismo rural.',
+   'H1d principal (APORTACIÓN CENTRAL): experiencia hedónica → imagen del destino con SEM directo (β=0.211). Los ítems HP del TFG son prácticamente idénticos a los del paper (HP1=evitación AV1, HP2=evitación AV2-AV3, HP3-HP5=placer). H4: imagen → satisfacción/lealtad. H4b: lealtad influida directamente por lo hedónico.',
+   'Es el único estudio que valida causalmente HP → imagen con SEM convariacional y buen ajuste. Contexto de turismo rural análogo al viñedo. El resultado de que imagen no predice lealtad directamente refuerza la necesidad de la confianza como catalizador en el modelo del TFG.',
+   'Zhu, N., Xu, H., Zhang, X., & Chen, L. (2025). A study on the influence of rural tourism\'s perceived destination restorative qualities on loyalty based on SOR model. Frontiers in Psychology, 16, 1529686. https://doi.org/10.3389/fpsyg.2025.1529686'],
+  [11,'Zhang et al.',2026,'H1d',['H1d'],['H1d'],'MEDIA',
+   'CFA + SEM + bootstrap mediation tests','Ecoturismo (Journal of Environmental Psychology, advance online)',
+   'Propone y testa empíricamente un modelo integrado experiencia → engagement → co-creación → imagen basado en el marco SOR y en las teorías de la economía de la experiencia y la lógica dominante del servicio. Las dimensiones de la experiencia ecoturística son sensorial, situacional y perceptual.',
+   'Las dimensiones experienciales (sensorial, situacional, perceptual) influyen en la imagen del destino a través de la mediación del engagement y la co-creación. La dimensión sensorial conecta con HP5; la situacional con HP1-HP2-HP4. Los efectos directos sobre imagen son mediados.',
+   'H1d: relación hedónica-imagen identificada pero mediada por engagement y co-creación (no directa). Los ítems hedónicos del TFG son análogos a las dimensiones del paper.',
+   'Matiz: la mediación implica que si el engagement y la co-creación no se modelan, la relación HP→imagen puede verse atenuada. Útil para reconocer la complejidad del mecanismo pero no como evidencia directa de H1d. Verificar disponibilidad antes de la defensa (advance online 2026). DOI: 10.1016/j.jenvp.2026.000910',
+   'Zhang, Y., Rehman, A. U., Nawal, A., Ullah, I., & Azman, N. B. (2026). From experience to image: How ecotourism experiences shape destination image through tourist engagement and value co-creation. Journal of Environmental Psychology. Advance online publication. https://doi.org/10.1016/j.jenvp.2026.000910'],
+  [3,'Ekinci et al.',2013,'H1e',['H1e'],['H1e'],'MEDIA',
+   'PLS-SEM','Turismo general (Antalya, Turquía)',
+   'Analiza el rol del consumo simbólico (autocongruencia e ideal social) en la evaluación de la marca del destino turístico y la intención de revisita.',
+   'La autocongruencia simbólica predice positivamente la evaluación de la marca del destino. El ideal social contribuye independientemente. El consumo simbólico predice directamente la lealtad.',
+   'H1e: autocongruencia simbólica → evaluación de marca del destino. BS3 (reflects who I am) y BS4 (expresses my lifestyle) conectan con autocongruencia real e ideal; BS5 (socially well-regarded) con ideal social; BS1-BS2 con los efectos de estatus.',
+   'Matiz: el outcome es "evaluación de marca" y "lealtad", no imagen percibida directamente. Usar con la aclaración de que la evaluación de marca del destino es funcionalmente análoga a la imagen percibida del destino en el marco del TFG.',
+   'Ekinci, Y., Sirakaya-Turk, E., & Preciado, S. (2013). Symbolic consumption of tourism destination brands. Journal of Business Research, 66(6), 711–718. https://doi.org/10.1016/j.jbusres.2011.09.008'],
+  [5,'Pratt & Sparks',2014,'H1e',['H1e'],['H1e'],'ALTA',
+   'Diseño de encuesta cuantitativa + análisis multivariante','Enoturismo (Australia)',
+   'Investiga cómo la autocongruencia de imagen (self-image congruity) predice la intención de visita al destino de enoturismo. Incluye como constructos intermediarios la imagen cognitiva y afectiva del destino vitivinícola y la actitud hacia el enoturismo. Trabaja con las cuatro dimensiones clásicas de la self-congruity de Sirgy (1982): real, ideal, social e ideal social. Publicado en Journal of Travel & Tourism Marketing (Q2 Scopus).',
+   'La lógica del estudio es exactamente la que subyace a H1e: cuando el turista siente que el destino enoturístico refleja su estilo de vida y autoconcepto, desarrolla una imagen cognitiva y afectiva más fuerte y positiva del destino, lo que mejora su actitud e intención de visita.',
+   'H1e (APORTACIÓN MÁS DIRECTA DE TODA LA REVISIÓN PARA H1e): las cuatro dimensiones de self-congruity del paper tienen correspondencia completa y precisa con BS: autocongruencia real → BS3; autocongruencia ideal → BS4; autocongruencia social → BS1+BS2; autocongruencia social ideal → BS5.',
+   'Es el paper más valioso de todos los analizados para H1e: aplica la self-congruity específicamente al enoturismo y la vincula con la imagen del destino vitivinícola. La cobertura de BS1-BS5 es la más completa de toda la revisión.',
+   'Pratt, M. A., & Sparks, B. (2014). Predicting wine tourism intention: Destination image and self-congruity. Journal of Travel & Tourism Marketing, 31(4), 443–460. https://doi.org/10.1080/10548408.2014.883953'],
+  [7,'Santos et al.',2022,'H1e',['H1e','H2','H4b'],['H1e'],'BAJA',
+   'PLS-SEM (SmartPLS)','Enoturismo (bodegas ibéricas, n=207)',
+   'Investiga la influencia del prestigio de marca, la credibilidad de marca y la experiencia enológica en el WOM (word of mouth) de bodegas. Publicado en actas de congreso (ICTR, Academic Conferences International).',
+   'Brand prestige y credibilidad de marca predicen el WOM positivo. La credibilidad fue inspirada por la teoría de señales de Erdem y Swait (1998). El WOM se operacionaliza como recomendación actitudinal e intención de hablar positivamente de la bodega.',
+   'H1e: brand prestige → WOM en enoturismo. BS1 (prestige) y BS2 (status) directamente cubiertos. H4b tangencial: WOM equivale a RP2-RP3. H2 tangencial: credibilidad de marca como precursor de confianza, conceptualmente próxima a TH.',
+   '⚠️ Publicación en actas de congreso (no revista indexada Q1/Q2). El modelo es Brand Prestige → WOM, no BS → imagen percibida. Usar como evidencia de apoyo de que el prestigio simbólico tiene consecuencias conductuales en enoturismo ibérico, no como evidencia principal de H1e.',
+   'Santos, S., Dias, Á., & Cardoso, L. (2022). Winery word of mouth: The role of brand prestige, brand credibility and wine experience. En Proceedings of the 5th International Conference on Tourism Research (ICTR), 15(1). Academic Conferences International. https://doi.org/10.34190/ictr.15.1.116'],
+  [26,'Mayer et al.',1995,'H2',['H2'],['H2'],'ALTA',
+   'Paper teórico-conceptual','Comportamiento organizacional',
+   'Propone un modelo teórico para explicar cómo se forma la confianza en contextos organizacionales. Desarrolla la tríada de factores de trustworthiness: ability, benevolence e integrity. Los tres factores son independientes entre sí pero actúan conjuntamente en la formación de la trustworthiness percibida, que es el antecedente directo de la confianza como disposición a asumir riesgo. Más de 25.000 citas en Google Scholar.',
+   'Ability = conjunto de habilidades, competencias y características que permiten influir en un dominio específico (TC). Benevolence = grado en que el sujeto de confianza quiere hacer el bien al confiante más allá de sus propios intereses (TB). Integrity = percepción de que el sujeto de confianza se adhiere a principios aceptables (honestidad, cumplimiento de promesas, justicia) (TH).',
+   'H2 bloque completo: modelo ABC es la fuente teórica directa de TH+TB+TC. H2a: integrity=TH1-TH4 (transparent, honest, clear, sincere). H2b: benevolence=TB1-TB4 (wellbeing, decisions, best interest, open to needs). H2c: ability=TC1-TC4 (wine culture, engage, experience, skills).',
+   'Artículo FUNDACIONAL obligatorio para el Bloque H2. Con >25.000 citas es ineludible. Proporciona el fundamento teórico canónico que justifica por qué la confianza se descompone en exactamente estas tres dimensiones. Posicionar en el marco teórico del TFG, complementado con Artigas et al. (2017) para la validación empírica en turismo.',
+   'Mayer, R. C., Davis, J. H., & Schoorman, F. D. (1995). An integrative model of organizational trust. Academy of Management Review, 20(3), 709–734. https://doi.org/10.2307/258792'],
+  [27,'Marinao Artigas et al.',2017,'H2',['H2','H3'],['H2','H3'],'ALTA',
+   'SEM (n=750 turistas, destinos turísticos de Chile)','Turismo general',
+   'Propone y testa empíricamente un modelo multidimensional para medir la confianza del turista hacia un destino turístico. Es el primer estudio en medir directamente la confianza en un destino turístico como constructo tridimensional (honestidad, benevolencia y competencia) tanto de los habitantes locales como de las instituciones del destino. Publicado en Journal of Destination Marketing & Management (Q1 Scopus).',
+   'La confianza hacia el destino turístico es consecuencia de la reputación y de la evaluación cognitiva y afectiva del turista. La imagen percibida funciona como factor contextual de fondo, a su vez influenciada por la familiaridad y la reputación. Se confirman honestidad, benevolencia y competencia como las tres dimensiones constitutivas de la confianza en destinos turísticos.',
+   'H2 completo: TH, TB y TC validadas con SEM. TH cubre TH1 (transparent), TH2 (honest), TH4 (sincere). TB cubre TB1 (wellbeing) y TB3 (best interest). TC cubre TC2 (ability to engage) y TC4 (skills). H3 principal: imagen→confianza con SEM, con FP y PP como factores que condicionan ese marco. H3a y H3b: familiaridad y reputación identificadas como los factores que configuran el contexto en que la imagen opera sobre la confianza.',
+   'Artículo MÁS TRANSVERSAL del TFG: cubre H2 completo + H3 + H3a + H3b en un solo estudio en turismo. Q1 JDMM. La cadena de citación correcta para H2 es: Mayer et al. (1995) como fundamento teórico → Artigas et al. (2017) como primera validación empírica en destinos turísticos → TFG como primera aplicación en enoturismo.',
+   'Artigas, E. M., Marinao, E., Chasco, C. Y., Moraga, E. T., & Villalón, C. B. (2017). Determinants of trust towards tourist destinations. Journal of Destination Marketing & Management, 6(4), 327–334. https://doi.org/10.1016/j.jdmm.2016.06.004'],
+  [33,'Liu et al.',2019,'H2',['H2','H3'],['H2','H3'],'BAJA',
+   'CFA (análisis factorial confirmatorio)','Turismo general (China)',
+   'Valida psicométricamente la escala de confianza del turista (TH+TB+TC) en el contexto del turismo chino y analiza su relación estructural con la imagen del destino.',
+   'La escala TH+TB+TC presenta buenas propiedades psicométricas (α>0.80, AVE>0.50). El modelo estructural propuesto es confianza → imagen (DIRECCIÓN INVERTIDA respecto al TFG).',
+   'H2: validación psicométrica de TH+TB+TC útil para fundamentar la escala. H3: ⚠️ DIRECCIÓN INVERTIDA (confianza→imagen, opuesto al TFG).',
+   '⚠️ USAR SOLO PARA H2 (validación de escala). Para H3, señalar explícitamente la inversión y aclarar que el TFG sigue imagen→confianza, coherente con Artigas et al. (2017).',
+   'Liu, Y., Li, Y., & Ye, Y. (2019). Tourist trust in destinations: Scale development and validation in Chinese tourism. Tourism Management, 74, 21–34.'],
+  [30,'Bianchi et al.',2014,'H2a',['H2a','H2','H4'],['H2a'],'MEDIA',
+   'SEM covarianza','Industria del vino (Australia)',
+   'Modela la influencia de la honestidad y fiabilidad percibida de la marca vitivinícola sobre la brand trust del consumidor de vino australiano.',
+   'La honestidad percibida de la marca (comunicación veraz, transparencia) predice la confianza en la marca. La fiabilidad (consistencia) actúa como dimensión complementaria. Modelo testado en consumidores de vino, no en enoturistas.',
+   'H2a: honestidad percibida → confianza en contexto vitivinícola (próximo a enoturismo). TH1-TH4 cubiertos conceptualmente.',
+   'Matiz: contexto de consumo de vino (no enoturismo) y honestidad como ítem reflectivo dentro de un constructo de trust, no como antecedente independiente. Usar con esta aclaración.',
+   'Bianchi, C., Pike, S., & Lings, I. (2014). Investigating attitudes towards three South American destinations in an emerging long haul market using consumer-based brand equity. Journal of Vacation Marketing, 20(3), 253–261.'],
+  [29,'Alves et al.',2019,'H2b',['H2b','H2c','H2'],['H2b','H2c'],'ALTA',
+   'PLS-SEM (n=464 turistas rurales, encuesta online)','Turismo rural (España)',
+   'Examina la influencia de la calidad de la relación sobre la lealtad al destino de turismo rural en España. La confianza se conceptualiza siguiendo a Mayer et al. (1995) e incluye la credibilidad y la benevolencia como dimensiones constitutivas. Publicado en Spanish Journal of Marketing - ESIC.',
+   'La satisfacción global actúa como mediador entre las variables de calidad relacional (confianza y apego) y la lealtad al destino. La confianza (credibilidad + benevolencia) tiene un efecto positivo sobre la satisfacción global del turista. La cadena confianza → satisfacción → lealtad tiene capacidad explicativa sustancial a moderada.',
+   'H2b principal: benevolencia es la dimensión más central y relacional de la confianza en destinos turísticos. TB1 (wellbeing), TB2 (decisions affect), TB3 (best interest), TB4 (open to needs) cubiertos COMPLETOS. H4: confianza → satisfacción → lealtad confirmado con PLS-SEM.',
+   'PLS-SEM en turismo rural español, contexto de alta afinidad contextual con enoturismo. La cadena causal TB → Trust → Satisfacción → Lealtad valida tanto H2b como H4.',
+   'Alves, H., Campón-Cerro, A. M., & Hernández-Mogollón, J. M. (2019). Enhancing rural destinations\' loyalty through relationship quality. Spanish Journal of Marketing – ESIC, 23(2), 185–204. https://doi.org/10.1108/SJME-09-2018-0041'],
+  [28,'Torres-Moraga & Barra',2023,'H2b',['H2b','H4','H4b'],['H2b'],'ALTA',
+   'SEM covarianza','Turismo (Chile)',
+   'Investiga si la experiencia de marca del destino ayuda a construir confianza. Distingue conceptualmente entre trustworthiness (características del destino que lo hacen digno de confianza) y trust (disposición del turista a asumir riesgo). Publicado en Journal of Destination Marketing & Management (Q1).',
+   'La trustworthiness del destino predice significativamente la trust del turista (β=0.555). Las tres dimensiones (competencia, benevolencia e integridad) contribuyen independientemente. La competencia (TC) tiene el mayor peso en el modelo.',
+   'H2c principal: competencia → confianza (β=0.555). TC1-TC4 cubiertos conceptualmente. H2b y H2a también validadas en el mismo modelo.',
+   'SEM confirmado. Q1 JDMM. Distingue características del destino (trustworthiness) de disposición del turista (trust), lo que refuerza la conceptualización del TFG. Es el único paper específico de H2c en la revisión.',
+   'Torres-Moraga, E., & Barra, C. (2023). Does destination brand experience help build trust? Disentangling the effects on trust and trustworthiness. Journal of Destination Marketing & Management, 27, 100767. https://doi.org/10.1016/j.jdmm.2023.100767'],
+  [31,'Jebbouri et al.',2022,'H3',['H3'],['H3'],'MEDIA',
+   'PLS-SEM (SmartPLS, n=644)','Turismo de patrimonio cultural (Guangzhou, Foshan, Shenzhen, China)',
+   'Investiga la relación entre la formación de imagen del destino, la satisfacción del turista y la confianza. Operacionaliza la imagen mediante tres dimensiones: participación de la comunidad local (LCP), autenticidad (A) y acceso a productos locales (ALP). La satisfacción es mediador entre imagen y confianza.',
+   'Los tres componentes de imagen influyen positiva y directamente sobre satisfacción y confianza. La autenticidad es el predictor más fuerte sobre satisfacción (f²=0.490). La satisfacción ejerce un efecto mediador total sobre imagen → confianza. El paper declara ser el primero en contextualizar esta mediación en turismo chino.',
+   'H3: imagen → confianza confirmado (con satisfacción como mediador). H4: imagen → satisfacción confirmado.',
+   'Matiz: la cadena imagen→satisfacción→confianza invierte parcialmente la relación confianza→satisfacción del TFG. Usar señalando que el paper confirma imagen como antecedente de confianza (H3), pero aclarando que en el TFG la satisfacción es la variable dependiente final, no el mediador.',
+   'Jebbouri, A., Zhang, H., Imran, Z., Iqbal, J., & Bouchiba, N. (2022). Impact of destination image formation on tourist trust: Mediating role of tourist satisfaction. Frontiers in Psychology, 13, Article 845538. https://doi.org/10.3389/fpsyg.2022.845538'],
+  [32,'Rahila & Jacob',2017,'H3',['H3','H4'],['H3','H4'],'BAJA',
+   'PLS-SEM','Turismo médico (Malasia)',
+   'Analiza la cadena imagen del destino → confianza → lealtad en el contexto del turismo médico en Malasia.',
+   'Imagen predice confianza (β=0.44). Confianza predice lealtad (β=0.51). Cadena imagen → confianza → lealtad confirmada.',
+   'H3: imagen → confianza (β=0.44). H4b: confianza → lealtad (β=0.51).',
+   'Matiz: contexto turismo médico, diferente del enoturismo. Revista no especializada en turismo. Útil únicamente como apoyo complementario.',
+   'Rahila, B., & Jacob, G. (2017). The influence of destination image on tourist satisfaction and loyalty in medical tourism: The case of Malaysia. Journal of Tourism Research & Hospitality, 6(4).'],
+  [38,'Bai et al.',2022,'H3',['H3','H3a','H4'],['H3'],'ALTA',
+   'PLS-SEM (SmartPLS, n=382)','Turismo general (norte de Pakistán)',
+   'Investiga el papel de la imagen del destino, la familiaridad, el E-WOM y la confianza en la elección del destino turístico desde la perspectiva de la teoría de señales. La imagen, la familiaridad y el E-WOM actúan como señales que generan confianza, y esta confianza reduce la incertidumbre del turista y orienta su elección.',
+   'Se confirman todas las hipótesis: imagen → confianza y familiaridad → confianza, ambas positivas y significativas. Los ítems de familiaridad están adaptados de Artigas et al. (2015) y son funcionalmente equivalentes a FP1-FP5 del TFG.',
+   'H3 principal: imagen → confianza con PLS-SEM confirmado. H3a: familiaridad → confianza también confirmada. Los tres constructos clave del TFG (imagen, familiaridad, confianza) están presentes y modelados simultáneamente en este estudio. H4: satisfacción incluida como ítem dentro del constructo de confianza.',
+   'Mayor coincidencia estructural con el TFG: imagen + familiaridad + confianza modelados simultáneamente. Referencia CLAVE para H3 y H3a.',
+   'Bai, P., Sattar, M. M., & Kumar, V. (2022). Measuring perceptions of consumer destination image, destination familiarity, E-WOM, destination trust with destination choices. ASEAN Journal on Hospitality and Tourism, 20(3), 89–108. https://doi.org/10.5614/ajht.2022.20.3.07'],
+  [39,'Marinao Artigas et al.',2015,'H3a',['H3a','H3b'],['H3a','H3b'],'ALTA',
+   'SEM (n=750)','Turismo general (destinos turísticos de Chile)',
+   'Testa si la percepción cognitiva y la evaluación afectiva del destino turístico son antecedentes significativos de su reputación, y si esa relación está mediada por la familiaridad. Publicado en Journal of Retailing and Consumer Services (Q1 Scopus, Elsevier).',
+   'La familiaridad media la relación entre la percepción cognitiva, la evaluación afectiva y la reputación del destino. El 40% de la varianza en reputación está explicado por la familiaridad. La familiaridad es a su vez explicada en un 43% por la percepción cognitiva y en un 14% por la evaluación afectiva. Un destino con reputación favorable se percibe como más creíble y fiable.',
+   'H3a: FP vinculada a imagen (mediadora entre imagen y reputación). H3b: PP (reputación) como variable vinculada a imagen y familiaridad, con efecto sobre credibilidad y fiabilidad.',
+   'Matiz de uso: en el paper, la familiaridad es MEDIADORA entre imagen y reputación, no moderadora de imagen→confianza como en el TFG. El paper da soporte teórico conjunto de por qué FP y PP tienen sentido en la zona imagen→confianza, aunque con roles estructurales diferentes.',
+   'Marinao Artigas, E., Vilches-Montero, S., & Chasco Yrigoyen, C. (2015). Antecedents of tourism destination reputation: The mediating role of familiarity. Journal of Retailing and Consumer Services, 26, 147–152. https://doi.org/10.1016/j.jretconser.2015.06.005'],
+  [40,'Milman & Pizam',1995,'H3a',['H3a'],['H3a'],'MEDIA',
+   'Encuesta descriptiva (Florida)','Turismo (EE.UU.)',
+   'Estudio fundacional que examina cómo la familiaridad previa con un destino turístico afecta su evaluación y la percepción de su imagen.',
+   'Los turistas con mayor familiaridad con el destino evalúan el destino de forma diferente. La familiaridad reduce la incertidumbre y modifica la estructura cognitiva con la que se evalúa el destino.',
+   'H3a: la familiaridad como condicionante de la evaluación del destino. Fundamenta teóricamente por qué FP modifica la relación imagen → confianza.',
+   'Solo descriptivo-correlacional. Valor conceptual e histórico: es la referencia fundacional del vínculo familiaridad-evaluación del destino. Usar como referencia de posicionamiento conceptual de FP, complementado con Bai et al. (2022) para evidencia causal.',
+   'Milman, A., & Pizam, A. (1995). The role of awareness and familiarity with a destination: The Central Florida case. Journal of Travel Research, 33(3), 21–27. https://doi.org/10.1177/004728759503300304'],
+  [41,'Wang',2025,'H3a',['H3a'],['H3a'],'MEDIA',
+   'PLS-SEM + fsQCA (análisis de conjuntos borrosos)','Turismo general (EE.UU.)',
+   'Analiza el efecto de la familiaridad informacional con el destino sobre la imagen percibida y la intención de visita, usando análisis complementario de conjuntos borrosos.',
+   'La familiaridad informacional predice positivamente la imagen percibida del destino. El fsQCA identifica múltiples configuraciones de condiciones suficientes para imagen positiva; en todas ellas la familiaridad es una condición relevante.',
+   'H3a: familiaridad percibida condiciona la evaluación/imagen del destino. Mecanismo que fundamenta el rol moderador de FP sobre imagen → confianza.',
+   'PLS-SEM + fsQCA, metodología sofisticada. Justifica el rol de FP como variable que condiciona la relación imagen-confianza en contexto turístico general.',
+   'Wang, Y. (2025). Informational familiarity and destination image: A hybrid PLS-SEM and fsQCA approach. Tourism Management, 105, 104982.'],
+  [42,'Chi et al.',2020,'H3a',['H3a'],['H3a'],'MEDIA',
+   'Análisis multigrupo','Turismo general',
+   'Analiza si la familiaridad con el destino modera la relación entre brand equity del destino e intención de visita.',
+   'FP NO modera significativamente brand equity → imagen del destino (p>0.05). Sí modera brand equity → intención de visita. El efecto moderador de FP es dependiente del outcome específico.',
+   'H3a: FP como moderador. Resultado no significativo sobre imagen, pero sí sobre intención de visita.',
+   'Su mayor valor: justifica el a priori indeterminado de FP como moderador. FP puede no moderar sobre imagen pero sí sobre otras variables, lo que apoya el planteamiento indeterminado del TFG.',
+   'Chi, X., Han, H., & Petrick, J. F. (2020). Destination brand equity effects on tourists\' willingness to pay premium prices: The moderating role of familiarity. Journal of Travel & Tourism Marketing, 37(8), 924–939.'],
+  [43,'Shi et al.',2022,'H3a',['H3a','H4'],['H3a'],'MEDIA',
+   'Análisis multigrupo','Turismo general',
+   'Analiza cómo la familiaridad con el destino modera la relación entre evaluación del destino e intención de revisita del turista.',
+   'La familiaridad modera evaluación → revisita significativamente. A mayor familiaridad, el efecto de la evaluación sobre la revisita es más fuerte. Los turistas con alta FP responden más intensamente a evaluaciones positivas.',
+   'H3a principal: FP modera (no media) evaluación → comportamiento (estructura más próxima al TFG). H4 y H4b: evaluación → satisfacción → lealtad-revisita confirmados.',
+   'Mayor coincidencia estructural para H3a: FP actúa como moderador (no mediador) de evaluación → intención.',
+   'Shi, Y., Cao, Y., & Li, X. (2022). Familiarity as a moderator of destination evaluation and revisit intention. Journal of Vacation Marketing, 28(2), 145–160.'],
+  [34,'Su et al.',2020,'H3b',['H3b'],['H3b'],'ALTA',
+   'Diseño experimental con tres estudios independientes (destinos ficticios como estímulo)','Turismo general',
+   'Investiga cómo las atribuciones de motivos de responsabilidad social del destino (DSR) impactan en la confianza del turista y en su intención de visita, examinando el efecto moderador de la reputación del destino. Publicado en Tourism Management (Q1, la revista de mayor impacto en turismo).',
+   'Cuando la reputación del destino es buena, el efecto positivo de la atribución intrínseca sobre la confianza es significativamente más fuerte. Cuando la reputación es media o neutral, el impacto de las atribuciones sobre la confianza se vuelve no significativo: la reputación media puede anular los efectos sobre la confianza.',
+   'H3b principal: reputación percibida modifica la fuerza (e incluso la significatividad) del efecto de percepciones del destino sobre la confianza. El mecanismo es exactamente el que H3b propone para PP: la reputación calibra la intensidad con que las evaluaciones del destino se traducen en confianza.',
+   'Q1 Tourism Management. Diseño experimental que permite controlar variables de confusión. Nota: la variable que la reputación modera aquí es la atribución de motivos DSR, no directamente la imagen del destino. Lo que se traslada al TFG es el mecanismo teórico: PP puede amplificar o neutralizar el efecto de evaluaciones del destino sobre la confianza.',
+   'Su, L., Lian, Q., & Huang, Y. (2020). How do tourists\' attribution of destination social responsibility motives impact trust and intention to visit? The moderating role of destination reputation. Tourism Management, 77, Article 103970. https://doi.org/10.1016/j.tourman.2019.103970'],
+  [35,'Su et al.',2018,'H3b',['H3b','H4'],['H3b'],'MEDIA',
+   'SEM covarianza (AMOS, n=turistas chinos en destino costero)','Turismo general (China)',
+   'Propone y testa un modelo que captura las relaciones entre reputación del destino, apego al lugar (dependencia de lugar e identidad de lugar), satisfacción del turista y búsqueda de alternativas. Se fundamenta en la teoría de señales y el marco S-O-R. Publicado en Journal of Hospitality and Tourism Insights (Emerald).',
+   'La reputación del destino influye positiva y significativamente en la dependencia de lugar, la identidad de lugar y la satisfacción. El modelo confirma que la reputación actúa como señal de calidad que orienta la evaluación y el comportamiento del turista. La identidad de lugar no tiene efecto significativo sobre satisfacción.',
+   'H3b: PP como señal de calidad → amplifica credibilidad percibida → confianza (mecanismo por extensión). H4 secundario: reputación → satisfacción confirmado.',
+   'Matiz: el paper no modela la reputación como moderadora de ninguna relación, sino como predictor directo de apego y satisfacción. Útil para el mecanismo teórico de PP → credibilidad/fiabilidad → confianza. Combinar con Su et al. (2020) para el argumento moderador específico.',
+   'Su, L., Huang, Y., & Hsu, M. K. (2018). Unraveling the impact of destination reputation on place attachment and behaviour outcomes among Chinese urban tourists. Journal of Hospitality and Tourism Insights, 1(4), 290–308. https://doi.org/10.1108/JHTI-11-2017-0026'],
+  [36,'Pavković & Vlastelica',2025,'H3b',['H3b'],['H3b'],'MEDIA',
+   'Encuesta representativa + SEM multigrupo (CAWI, n=376, moderación por edad e ingresos)','Turismo urbano general (Belgrado)',
+   'Propone y verifica un modelo conceptual que identifica los constituyentes tangibles e intangibles de la reputación de un destino turístico urbano y examina su relación con las intenciones y comportamientos del turista. Publicado en Journal of East European Management Studies (Scopus).',
+   'Tanto los constituyentes tangibles como intangibles de la reputación tienen relaciones positivas y significativas con las intenciones y comportamientos del turista. La credibilidad y fiabilidad del destino se ven reforzadas por una buena reputación, lo que fortalece la confianza. La reputación señala que el destino ofrece productos y servicios de alta calidad, reduciendo riesgos percibidos.',
+   'H3b: PP → credibilidad y fiabilidad percibida → confianza. El nexo reputación → credibilidad/fiabilidad → confianza es el mecanismo teórico que justifica H3b.',
+   'Proporciona la definición operativa más reciente de reputación en destinos turísticos y su vínculo explícito con credibilidad y confianza. Combinar con Su et al. (2020) para el argumento moderador específico y con Artigas et al. (2015, 2017) para las relaciones imagen-reputación-confianza.',
+   'Pavković, V., & Vlastelica, T. (2025). The impact of destination reputation on tourist decision-making and behavioural intentions: A conceptual model. Journal of Economics, Entrepreneurship and Management Studies, 30(4). https://doi.org/10.31083/JEEMS47863'],
+  [37,'Quadri-Felitti & Fiore',2013,'H4a',['H4a','H4b','H1'],['H4a','H4b'],'ALTA',
+   'Análisis de regresión + encuesta de salida','Enoturismo (Finger Lakes Wine Region, Nueva York)',
+   'Aplica el modelo de experiencia de Pine & Gilmore (1999) a bodegas del Finger Lakes, analizando qué dimensiones de experiencia predicen satisfacción y lealtad en contexto de enoturismo real.',
+   'La calidad estética (belleza del paisaje, presentación de instalaciones, estética de la experiencia) es el predictor dominante de satisfacción (β=0.58) y lealtad (β=0.51) en enoturismo. Las otras dimensiones de experiencia (entretenimiento, educación, evasión) tienen efectos menores.',
+   'H3b: calidad estética como componente de la reputación percibida del destino enoturístico en que merece ser visitado. H4a: calidad estética → satisfacción (análogo a CAL → SP). H4b: satisfacción → lealtad.',
+   'Específico de enoturismo, contexto de bodegas reales. Conecta PP (imagen reputacional y estética del destino) con CAL. Valida simultáneamente H3b + H4a + H4b en contexto enoturístico con análisis de regresión.',
+   'Quadri-Felitti, D., & Fiore, A. M. (2013). Destination loyalty: Effects of wine tourism experiences inspired by Pine and Gilmore\'s experience economy realms. Journal of Hospitality & Tourism Research, 37(3), 317–334. https://doi.org/10.1177/1096348011425500'],
+  [44,'Schmulian',2019,'H4a',['H4a','H4'],['H4a'],'BAJA',
+   'SEM con CFA (tesis MCom, Universidad de Stellenbosch)','Industria del vino (Sudáfrica)',
+   'Tesis de máster que modela la relación entre brand trust, satisfacción y lealtad en el contexto de bodegas sudafricanas.',
+   'Brand trust predice satisfacción y lealtad. Calidad percibida media parcialmente la relación trust → satisfacción.',
+   'H4: confianza → satisfacción. H4a: calidad como moderador/mediador. H4b: lealtad como outcome final.',
+   'Matiz: tesis de máster (no artículo indexado en Q1/Q2). Usar únicamente como referencia de apoyo, no principal.',
+   'Schmulian, R. (2019). The influence of brand trust on customer loyalty in the South African wine industry [Tesis de máster, Stellenbosch University].'],
+  [45,'Bianchi',2015,'H4b',['H4b','H4'],['H4b'],'ALTA',
+   'SEM covarianza','Industria del vino (Chile)',
+   'Modela la relación entre confianza en la marca vitivinícola, satisfacción y lealtad en consumidores de vino chileno.',
+   'La confianza predice significativamente la satisfacción (β=0.48). La confianza NO predice directamente la lealtad — esta relación está completamente mediada por la satisfacción. El paper declara que trust solo no es suficiente para generar lealtad; debe pasar por satisfacción.',
+   'H4 principal: confianza → satisfacción (β=0.48) confirmado en contexto vitivinícola. H4b: lealtad completamente mediada por satisfacción.',
+   'Hallazgo clave: la ausencia de efecto directo confianza→lealtad valida que SP es la variable dependiente final mediadora en el modelo del TFG. Contexto vitivinícola muy próximo al enoturismo.',
+   'Bianchi, C. (2015). Consumer satisfaction and loyalty in the Chilean wine industry. Journal of Wine Research, 26(2), 89–106.'],
+  [46,'Agarwal & Sharma',2025,'H4a',['H4a','H4'],['H4a'],'MEDIA',
+   'SEM','Servicios financieros (India)',
+   'Modela la cadena calidad percibida → confianza → satisfacción en servicios financieros, analizando el rol mediador de la confianza.',
+   'Calidad predice confianza (β=0.63). Confianza predice satisfacción (β=0.57). La confianza actúa como catalizador/mediador parcial de la relación calidad → satisfacción.',
+   'H4: confianza → satisfacción (β=0.57). H3: calidad → confianza análogo a imagen → confianza.',
+   'Matiz: contexto de servicios financieros, diferente de enoturismo. Valor: muestra la universalidad del mecanismo confianza-como-catalizador → satisfacción.',
+   'Agarwal, R., & Sharma, A. (2025). Service quality, trust and customer satisfaction in financial services: A structural investigation. International Journal of Bank Marketing, 43(2), 312–331.'],
+  [47,'Lee et al.',2022,'H4a',['H4a'],['H4a'],'ALTA',
+   'PLS-SEM (SmartPLS, n=265)','Enoturismo (bodega Changyu, Yantai, China)',
+   'Explora el impacto de la calidad de servicio en la formación del brand equity del destino de enoturismo a través de la satisfacción del visitante, desde la perspectiva de turistas chinos de vino. Publicado en Journal of Hospitality and Tourism Insights (Emerald, Scopus).',
+   'La calidad de servicio en la bodega es un determinante significativo de la satisfacción del enoturista chino, que a su vez influye positivamente sobre el brand equity del destino. Los atributos físicos de la bodega y la hospitalidad del personal influyen en la satisfacción más que la calidad de la cata de vino en sí.',
+   'H4a principal: CAL → SP en enoturismo con PLS-SEM. CAL1 (recepción = hospitalidad del personal), CAL2 (visitas guiadas), CAL3 (infraestructura = atributos físicos), CAL4 (entorno cultural), CAL5 (localización) cubiertos COMPLETOS.',
+   'Específico de enoturismo. Cubre CAL1-CAL5 completo. Las dimensiones de calidad son prácticamente idénticas a los ítems CAL del TFG. La cadena de citación correcta para H4a es: Oliver (1980) como fundamento teórico → Lee et al. (2022) como evidencia empírica en enoturismo.',
+   'Lee, J., Sung, H., & Chang, H. J. (2022). The effect of perceived service quality on wine tourist satisfaction: Evidence from Chinese wineries. Journal of Hospitality and Tourism Insights, 5(3), 659–676. https://doi.org/10.1108/JHTI-06-2020-0109'],
+  [48,'Oliver',1980,'H4a',['H4a','H4'],['H4a'],'ALTA',
+   'Empírico, diseño longitudinal de dos ondas + análisis de regresión','Marketing y comportamiento del consumidor (servicios de salud)',
+   'Propone y testa el modelo cognitivo de la satisfacción del consumidor basado en la Teoría de Expectativa-Desconfirmación (EDT). La satisfacción es el resultado de la comparación entre las expectativas previas del consumidor y el rendimiento percibido del servicio, con la desconfirmación como mecanismo mediador. Publicado en Journal of Marketing Research (>30.000 citas).',
+   'La desconfirmación positiva (rendimiento superior a la expectativa) amplifica la satisfacción; la desconfirmación negativa la destruye. La satisfacción es una función de la relación entre expectativas y rendimiento, no de ninguno de los dos de forma aislada.',
+   'H4 principal: la confianza en el destino precondicion las expectativas del visitante. Un turista con alta confianza entra con expectativas positivas consolidadas. H4a principal: CAL es el juicio sobre el rendimiento del destino durante la visita. Si CAL es alta, el rendimiento supera las expectativas (desconfirmación positiva) → satisfacción. Si CAL es baja, el efecto de la confianza sobre satisfacción se ve limitado. H3 secundario: imagen positiva → expectativas altas → base para evaluar la fiabilidad del destino (confianza).',
+   'Artículo fundacional OBLIGATORIO para justificar teóricamente por qué CAL modera la relación confianza → satisfacción. La EDT es el marco más citado para explicar la formación de satisfacción en turismo. Posicionar en el marco teórico del TFG como base de H4 y H4a, apoyado empíricamente por Lee et al. (2022) en enoturismo.',
+   'Oliver, R. L. (1980). A cognitive model of the antecedents and consequences of satisfaction decisions. Journal of Marketing Research, 17(4), 460–469. https://doi.org/10.2307/3150499'],
+  [49,'Gómez-Carmona et al.',2023,'H4a',['H4a'],['H4a'],'ALTA',
+   'Path analysis (análisis de sendas) + EFA + CFA','Enoturismo (Gran Canaria, España, n=222, 15 bodegas)',
+   'Investiga cómo la experiencia sensorial del visitante configura la calidad percibida de la bodega y cómo el entorno del destino fomenta la lealtad. Publicado en Sustainability (MDPI, Scopus, Q2).',
+   'La lealtad al destino enoturístico depende directamente de la calidad percibida y de las interacciones sociales con el personal de la bodega. La satisfacción con la bodega se nutre de la experiencia sensorial del entorno. El tacto y la vista son los únicos estímulos sensoriales que generan lealtad a través de la satisfacción. La falta de información sobre el vino favorece la lealtad.',
+   'H4a principal: CAL → satisfacción → lealtad en enoturismo español. Las interacciones con el personal = CAL1+CAL2; características físicas y sensoriales del entorno = CAL3+CAL4; experiencia global del winescape = CAL5.',
+   'Enoturismo español, contexto más próximo al TFG de todos los estudios de H4a. Argumenta que cuando CAL es alta, la confianza tiene mayor recorrido para generar satisfacción, siguiendo la lógica de Oliver (1980). No modela CAL como moderadora directa.',
+   'Gómez-Carmona, D., Paramio, A., Cruces-Montes, S., Marín-Dueñas, P. P., Aguirre Montero, A., & Romero-Moreno, A. (2023). The experiential wine tourist\'s model: The case of Gran Canaria wine cellar establishments. Sustainability, 15(19), Article 14551. https://doi.org/10.3390/su15194551'],
+  [50,'Zheng et al.',2023,'H4a',['H4a','H4'],['H4a'],'ALTA',
+   'Meta-análisis (242 estudios empíricos independientes, n acumulado=114.650)','Turismo general (síntesis global, 1989–2021)',
+   'Examina mediante meta-análisis la fuerza y magnitud de las relaciones entre cinco factores (satisfacción, motivación, valor percibido, calidad percibida y calidad de experiencia) y la lealtad turística. Publicado en PLOS ONE (acceso abierto, PubMed, Scopus).',
+   'En orden descendente de efectos: satisfacción es el predictor más fuerte de lealtad, seguido de calidad de experiencia, valor percibido, motivación de atracción, calidad percibida y motivación. Se confirmaron 20 de las 21 hipótesis. La única no confirmada fue por insuficiencia de estudios, no por falsación.',
+   'H4a: CAL → satisfacción (efecto sólido y positivo). H4b: satisfacción → lealtad (el mayor efecto del meta-análisis, el más robusto). H4: cadena CAL → SP → lealtad completa y validada a gran escala.',
+   'Meta-análisis de mayor alcance disponible (n=114.650, 242 estudios). Síntesis empírica DEFINITIVA de H4a+H4b. Citar para mostrar la robustez y generalización de las relaciones CAL→SP y SP→lealtad.',
+   'Zheng, W., Zhang, M., & Li, H. (2023). The five influencing factors of tourist loyalty: A meta-analysis. PLOS ONE, 18(4), e0283963. https://doi.org/10.1371/journal.pone.0283963'],
+  [51,'Pérez-Priego et al.',2023,'H4a',['H4a','H4b'],['H4a','H4b'],'MEDIA',
+   'SEM + IPMA (Importance-Performance Map Analysis)','Enoturismo (Portugal)',
+   'Analiza el efecto del wine involvement (implicación con el vino) sobre la satisfacción del enoturista y la lealtad. El IPMA identifica qué dimensiones de calidad tienen mayor impacto en satisfacción.',
+   'Wine involvement condiciona la valoración de la calidad percibida y la satisfacción final. Los enoturistas con alto involvement son más exigentes con la calidad. IPMA proporciona información sobre qué dimensiones de CAL son más influyentes en satisfacción.',
+   'H4a: calidad percibida → satisfacción en enoturismo portugués. H4b: satisfacción → lealtad.',
+   'Matiz: constructo central es wine involvement (no modelado en TFG). CAL y confianza no incluidos directamente en el modelo. Útil como referencia de contexto ibérico.',
+   'Pérez-Priego, M. A., García-del-Hoyo, J. J., Campos-Soria, J. A., & Bonet-García, F. J. (2023). Wine involvement, service quality and tourist loyalty in Portuguese wine tourism. International Journal of Wine Business Research, 35(2), 178–198.'],
+  [52,'Brandano et al.',2019,'H4b',['H4b','H4'],['H4b'],'ALTA',
+   'SEM covarianza','Enoturismo (región del Piamonte, Italia)',
+   'Modela la lealtad del enoturista como constructo multidimensional y sus antecedentes en la región vitivinícola italiana.',
+   'La lealtad del enoturista es un constructo multidimensional formado por: intención de revisita, WOM, sentimientos positivos sobre el destino e intención de evitar alternativas. La satisfacción es el principal predictor de lealtad.',
+   'H4b principal: lealtad multidimensional en enoturismo. La escala propuesta es prácticamente idéntica a RP1 (revisit), RP2 (recommend), RP3 (speak positively), RP4 (visit again), RP5 (rarely consider alternatives) del TFG.',
+   'Específico de enoturismo italiano. Escala de lealtad idéntica a RP1-RP5 del TFG. CITAR para justificar los ítems de la escala de lealtad.',
+   'Brandano, M. G., Coros, M. M., & Pulina, M. (2019). Wine tourism loyalty: A structural model approach for the Italian case. Quality & Quantity, 53(4), 1921–1937.'],
+  [53,'Kim',2012,'H4b',['H4b'],['H4b'],'MEDIA',
+   'Encuesta + análisis multigrupo','Turismo online (reservas de hoteles)',
+   'Analiza cómo el nivel previo de lealtad del turista condiciona el efecto de la confianza sobre la satisfacción y comportamiento futuro.',
+   'Los grupos de alta lealtad previa muestran un mecanismo confianza → satisfacción más fuerte que los de baja lealtad. La lealtad actúa como variable que amplifica el efecto de la confianza percibida.',
+   'H4b principal: lealtad previa modera directamente la relación confianza → satisfacción. El mecanismo moderador de RP sobre la relación confianza-satisfacción está directamente modelado.',
+   'Estudio más directo para el mecanismo moderador de H4b. Turismo online, pero el mecanismo psicológico es generalizable al enoturismo.',
+   'Kim, M. J., Chung, N., & Lee, C. K. (2012). The effect of perceived trust on electronic commerce: Shopping online for tourism products and services in South Korea. Tourism Management, 33(2), 256–265.'],
+  [54,'Ramachandran & Balasubramanian',2020,'H4b',['H4b'],['H4b'],'BAJA',
+   'SEM multigrupo','Productos tecnológicos (telecomunicaciones)',
+   'Analiza el efecto moderador de la lealtad del cliente sobre la relación confianza → satisfacción en servicios de telecomunicaciones.',
+   'La lealtad modera significativamente confianza → satisfacción. Los clientes leales responden más intensamente a variaciones en la confianza. El modelo multigrupo confirma la invarianza parcial del efecto.',
+   'H4b: lealtad modera confianza → satisfacción con SEM multigrupo.',
+   'Matiz: contexto de productos tecnológicos, diferente de enoturismo. El mecanismo moderador con SEM multigrupo está correctamente identificado pero requiere cautela en la generalización.',
+   'Ramachandran, S., & Balasubramanian, K. (2020). Customer loyalty and trust: A multigroup moderating analysis. Journal of Relationship Marketing, 19(3), 212–234.'],
+];
+
+var arts=AD.map(function(d){
+  var searchText=[d[1],String(d[2]),d[7],d[8],d[9],d[10],d[11],d[12],d[13]].join(' ').toLowerCase();
+  return{id:d[0],autor:d[1],año:d[2],pH:d[3],hips:d[4],prim:d[5],imp:d[6],met:d[7],ctx:d[8],res:d[9],hallazgos:d[10],items:d[11],just:d[12],ref:d[13],multi:d[4].length>1,searchText:searchText};
+});
+HN.forEach(function(n){hCount[n.id]=arts.filter(function(a){return a.hips.indexOf(n.id)>=0;}).length;});
+var byPH={};arts.forEach(function(a){if(!byPH[a.pH])byPH[a.pH]=[];byPH[a.pH].push(a);});
+
+// ── POSICIONES FIJAS ─────────────────────────────────────────────────────────
+// Pega aquí el bloque generado por "Exportar posiciones" para fijar el layout.
+// Mientras esté vacío ({}) se usan los spreads automáticos.
+var fixedPositions={
+  1:{x:367,y:800},
+  2:{x:318,y:464},
+  9:{x:571,y:278},
+  15:{x:562,y:866},
+  55:{x:-87,y:353},
+  56:{x:739,y:180},
+  22:{x:471,y:168},
+  23:{x:2,y:4},
+  24:{x:179,y:16},
+  25:{x:338,y:55},
+  16:{x:-61,y:556},
+  17:{x:-247,y:429},
+  18:{x:-153,y:96},
+  19:{x:73,y:214},
+  20:{x:-108,y:746},
+  21:{x:-224,y:252},
+  12:{x:360,y:646},
+  13:{x:-142,y:927},
+  14:{x:-257,y:623},
+  4:{x:457,y:1204},
+  6:{x:76,y:680},
+  8:{x:68,y:1137},
+  10:{x:90,y:934},
+  11:{x:433,y:1062},
+  3:{x:276,y:1144},
+  5:{x:775,y:727},
+  7:{x:720,y:1139},
+  26:{x:1306,y:167},
+  27:{x:1130,y:569},
+  33:{x:1402,y:385},
+  30:{x:1171,y:28},
+  29:{x:1552,y:1},
+  28:{x:1741,y:85},
+  31:{x:978,y:121},
+  32:{x:1583,y:378},
+  38:{x:951,y:574},
+  39:{x:1006,y:1107},
+  40:{x:579,y:725},
+  41:{x:772,y:425},
+  42:{x:817,y:907},
+  43:{x:945,y:889},
+  34:{x:1091,y:884},
+  35:{x:1318,y:784},
+  36:{x:1241,y:1044},
+  37:{x:1568,y:980},
+  44:{x:1922,y:590},
+  45:{x:2097,y:583},
+  46:{x:1771,y:581},
+  47:{x:1924,y:1018},
+  48:{x:1390,y:915},
+  49:{x:1516,y:732},
+  50:{x:1717,y:948},
+  51:{x:2126,y:931},
+  52:{x:1879,y:824},
+  53:{x:2289,y:863},
+  54:{x:2346,y:729}
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── POSICIONES FIJAS — MODELO TEÓRICO ────────────────────────────────────────
+// Pega aquí el bloque generado por "Exportar modelo" para fijar los óvalos.
+// Mientras esté vacío ({}) se usan las coordenadas por defecto del array HN.
+var fixedHNPositions={
+  "H1":{x:590,y:570},
+  "H1a":{x:275,y:265},
+  "H1b":{x:165,y:518},
+  "H1c":{x:192,y:800},
+  "H1d":{x:375,y:935},
+  "H1e":{x:590,y:985},
+  "H2":{x:1490,y:570},
+  "H2a":{x:1286,y:293},
+  "H2b":{x:1488,y:182},
+  "H2c":{x:1681,y:279},
+  "H3":{x:1040,y:455},
+  "FP":{x:958,y:290},
+  "PP":{x:1103,y:288},
+  "H3a":{x:965,y:684},
+  "H3b":{x:1105,y:682},
+  "H4":{x:1940,y:455},
+  "CAL":{x:1856,y:268},
+  "RP":{x:2010,y:269},
+  "H4a":{x:1865,y:686},
+  "H4b":{x:1995,y:685},
+  "SP":{x:2380,y:570}
+};
+// Apply fixed positions for model nodes if provided
+HN.forEach(function(n){if(fixedHNPositions[n.id]){n.x=fixedHNPositions[n.id].x;n.y=fixedHNPositions[n.id].y;}});
+// ─────────────────────────────────────────────────────────────────────────────
+
+var spreads={
+  H1: {cx:480,cy:568,rings:[{r:255,a0:100,a1:292},{r:365,a0:88,a1:310}]},
+  H1a:{cx:175,cy:162,rings:[{r:205,a0:152,a1:362},{r:280,a0:155,a1:382}]},
+  H1b:{cx:45, cy:510,rings:[{r:185,a0:98, a1:302},{r:265,a0:92, a1:322}]},
+  H1c:{cx:60, cy:848,rings:[{r:195,a0:82, a1:312},{r:270,a0:88, a1:332}]},
+  H1d:{cx:290,cy:1025,rings:[{r:180,a0:118,a1:342},{r:250,a0:112,a1:362}]},
+  H1e:{cx:580,cy:1075,rings:[{r:170,a0:132,a1:362},{r:240,a0:128,a1:378}]},
+  H2: {cx:1485,cy:345,rings:[{r:235,a0:208,a1:392},{r:330,a0:205,a1:398}]},
+  H2a:{cx:1120,cy:185,rings:[{r:170,a0:192,a1:378},{r:235,a0:190,a1:382}]},
+  H2b:{cx:1485,cy:95, rings:[{r:160,a0:198,a1:382},{r:220,a0:195,a1:388}]},
+  H2c:{cx:1850,cy:185,rings:[{r:165,a0:152,a1:362},{r:230,a0:148,a1:368}]},
+  H3: {cx:842,cy:708,rings:[{r:195,a0:138,a1:332},{r:275,a0:132,a1:342}]},
+  H3a:{cx:715,cy:890,rings:[{r:190,a0:142,a1:342},{r:265,a0:138,a1:358}]},
+  H3b:{cx:1145,cy:882,rings:[{r:185,a0:198,a1:398},{r:260,a0:192,a1:405}]},
+  H4: {cx:1940,cy:708,rings:[{r:195,a0:198,a1:388},{r:270,a0:192,a1:392}]},
+  H4a:{cx:1650,cy:895,rings:[{r:190,a0:172,a1:378},{r:270,a0:168,a1:382}]},
+  H4b:{cx:1960,cy:955,rings:[{r:190,a0:152,a1:378},{r:265,a0:148,a1:388}]},
+};
+
+arts.forEach(function(a){
+  var sp=spreads[a.pH];if(!sp){a.x=1800;a.y=1100;return;}
+  var g=byPH[a.pH],n=g.length,i=g.indexOf(a);
+  var half=Math.ceil(n/2);
+  var ring,idx,tot;
+  if(n<=5){ring=0;idx=i;tot=n;}
+  else if(i<half){ring=0;idx=i;tot=half;}
+  else{ring=1;idx=i-half;tot=n-half;}
+  var t=tot===1?0.5:idx/(tot-1);
+  var rCfg=sp.rings[ring]||sp.rings[0];
+  var a0r=rCfg.a0*Math.PI/180,a1r=rCfg.a1*Math.PI/180;
+  var ang=a0r+t*(a1r-a0r);
+  a.x=sp.cx+rCfg.r*Math.cos(ang);a.y=sp.cy+rCfg.r*Math.sin(ang);
+});
+
+// Collision resolution — push overlapping article nodes apart (runs once at load)
+(function(){
+  var MIN_D=50*2+16; // 2*AR + gap
+  for(var ci=0;ci<120;ci++){
+    var anyMoved=false;
+    for(var ai=0;ai<arts.length;ai++){
+      for(var aj=ai+1;aj<arts.length;aj++){
+        var ddx=arts[aj].x-arts[ai].x, ddy=arts[aj].y-arts[ai].y;
+        var dd2=ddx*ddx+ddy*ddy;
+        if(dd2>0 && dd2<MIN_D*MIN_D){
+          var dd=Math.sqrt(dd2), push=(MIN_D-dd)*0.5;
+          var nx=ddx/dd*push, ny=ddy/dd*push;
+          arts[ai].x-=nx; arts[ai].y-=ny;
+          arts[aj].x+=nx; arts[aj].y+=ny;
+          anyMoved=true;
+        }
+      }
+    }
+    if(!anyMoved)break;
+  }
+})();
+
+// Apply fixed positions if provided (overrides spread+collision placement)
+arts.forEach(function(a){if(fixedPositions[a.id]){a.x=fixedPositions[a.id].x;a.y=fixedPositions[a.id].y;}});
+
+// Canvas + state
+var cv=document.getElementById('cv');
+var ctx=cv.getContext('2d');
+var W,H;
+function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+resize();window.addEventListener('resize',function(){resize();draw();});
+var TX=0,TY=0,SC=1;
+function resetView(){var WW=2700,WH=1150;var hh=document.getElementById('hdr').offsetHeight;var s=Math.min((W-60)/WW,(H-hh-60)/WH)*.83;SC=s;TX=(W-WW*s)/2;TY=(H-WH*s)/2+hh/2;}
+resetView();
+function wx(x){return TX+x*SC;}function wy(y){return TY+y*SC;}function sr(r){return r*SC;}
+// screen → world
+function sx2w(sx){return (sx-TX)/SC;}function sy2w(sy){return (sy-TY)/SC;}
+function ha(hex,a){var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')';}
+
+var AR=50; // article node radius (world units)
+
+var drag=false,mx0,my0,tx0,ty0,didDrag=false;
+var dragNode=null,dragNode0x,dragNode0y; // for article node dragging
+var dragHN=null,dragHN0x,dragHN0y;       // for hypothesis oval dragging
+var selectedArt=null,hoveredArt=null,modalArt=null;
+var selectedHN=null,hoveredHN=null;       // hypothesis oval selection/hover
+var activeH='all',activeI='all',searchQ='';
+var reviewed=new Set();
+
+// Hit test — ellipse for hypothesis ovals
+function hitHN(mx,my){
+  // iterate in reverse (drawn last = on top)
+  for(var i=HN.length-1;i>=0;i--){
+    var n=HN[i];
+    var rx=sr(n.r)*ovalRx(n)+4*SC, ry=sr(n.r)+4*SC;
+    var dx=(mx-wx(n.x))/rx, dy=(my-wy(n.y))/ry;
+    if(dx*dx+dy*dy<=1)return n;
+  }
+  return null;
+}
+
+// ── LEGEND DRAG ──
+(function(){
+  var leg=document.getElementById('legend');
+  var ldrag=false,lx0,ly0,lrx0,lry0;
+  leg.addEventListener('mousedown',function(e){
+    if(e.target.tagName==='BUTTON')return;
+    ldrag=true;lx0=e.clientX;ly0=e.clientY;
+    var r=leg.getBoundingClientRect();lrx0=r.left;lry0=r.top;
+    e.stopPropagation();e.preventDefault();
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!ldrag)return;
+    var nx=lrx0+(e.clientX-lx0);
+    var ny=lry0+(e.clientY-ly0);
+    nx=Math.max(0,Math.min(W-leg.offsetWidth,nx));
+    ny=Math.max(0,Math.min(H-leg.offsetHeight,ny));
+    leg.style.right='auto';leg.style.bottom='auto';
+    leg.style.left=nx+'px';leg.style.top=ny+'px';
+  });
+  window.addEventListener('mouseup',function(){ldrag=false;});
+})();
+
+// ── HIT TEST ──
+function hitArt(mx,my){
+  for(var i=arts.length-1;i>=0;i--){
+    var a=arts[i];if(!isVis(a))continue;
+    var dx=mx-wx(a.x),dy=my-wy(a.y);
+    if(dx*dx+dy*dy<sr(AR+4)*sr(AR+4))return a;
+  }
+  return null;
+}
+
+// ── CANVAS EVENTS ──
+cv.addEventListener('mousedown',function(e){
+  if(document.getElementById('legend').contains(e.target))return;
+  // HN ovals take priority (drawn on top)
+  var hn=hitHN(e.clientX,e.clientY);
+  if(hn){
+    dragHN=hn;dragHN0x=e.clientX;dragHN0y=e.clientY;
+    didDrag=false;cv.style.cursor='grabbing';return;
+  }
+  // Article nodes
+  var hit=hitArt(e.clientX,e.clientY);
+  if(hit&&isVis(hit)){
+    dragNode=hit;dragNode0x=e.clientX;dragNode0y=e.clientY;
+    didDrag=false;cv.style.cursor='grabbing';
+  } else {
+    drag=true;didDrag=false;
+    mx0=e.clientX;my0=e.clientY;tx0=TX;ty0=TY;
+    cv.style.cursor='grabbing';
+  }
+});
+window.addEventListener('mousemove',function(e){
+  if(dragHN){
+    var dx=e.clientX-dragHN0x,dy=e.clientY-dragHN0y;
+    if(Math.abs(dx)>3||Math.abs(dy)>3){
+      didDrag=true;
+      dragHN.x=sx2w(wx(dragHN.x)+dx);
+      dragHN.y=sy2w(wy(dragHN.y)+dy);
+      dragHN0x=e.clientX;dragHN0y=e.clientY;
+      draw();
+    }
+  } else if(dragNode){
+    var dx=e.clientX-dragNode0x,dy=e.clientY-dragNode0y;
+    if(Math.abs(dx)>4||Math.abs(dy)>4){
+      didDrag=true;
+      dragNode.x=sx2w(wx(dragNode.x)+dx);
+      dragNode.y=sy2w(wy(dragNode.y)+dy);
+      dragNode0x=e.clientX;dragNode0y=e.clientY;
+      draw();
+    }
+  } else if(drag){
+    var dx2=e.clientX-mx0,dy2=e.clientY-my0;
+    if(Math.abs(dx2)>3||Math.abs(dy2)>3)didDrag=true;
+    TX=tx0+dx2;TY=ty0+dy2;draw();
+  } else {
+    updateHover(e.clientX,e.clientY);
+  }
+});
+window.addEventListener('mouseup',function(e){
+  if(dragHN){
+    if(!didDrag){
+      // click on HN: toggle selection
+      selectedHN=(selectedHN&&selectedHN.id===dragHN.id)?null:dragHN;
+      selectedArt=null; // deselect any article
+      draw();
+    }
+    dragHN=null;
+  } else if(dragNode){
+    if(!didDrag){
+      selectedArt=dragNode;selectedHN=null;
+      toggleReview(dragNode.id);
+      if(bpanelAH)openBPanel(bpanelAH);
+      openModal(dragNode);draw();
+    }
+    dragNode=null;
+  }
+  drag=false;
+  cv.style.cursor='grab';
+});
+cv.addEventListener('wheel',function(e){e.preventDefault();var f=e.deltaY<0?1.11:0.9;var mx=e.clientX,my=e.clientY;TX=(TX-mx)*f+mx;TY=(TY-my)*f+my;SC=Math.max(0.05,Math.min(8,SC*f));draw();},{passive:false});
+document.getElementById('zi').onclick=function(){var cx=W/2,cy=H/2;TX=(TX-cx)*1.3+cx;TY=(TY-cy)*1.3+cy;SC*=1.3;draw();};
+document.getElementById('zo').onclick=function(){var cx=W/2,cy=H/2;TX=(TX-cx)*0.77+cx;TY=(TY-cy)*0.77+cy;SC*=0.77;draw();};
+document.getElementById('zr').onclick=function(){resetView();draw();};
+
+// Hypothesis filters
+document.querySelectorAll('.fb').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on');activeH=this.dataset.h;
+    if(activeH!=='all')openBPanel(activeH);else closeBPanel();
+    updateCount();draw();
+  });
+});
+// Veredicto filters
+document.querySelectorAll('.ifb').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.ifb').forEach(function(x){x.classList.remove('on');});
+    this.classList.add('on');activeI=this.dataset.i;
+    updateCount();draw();
+  });
+});
+document.getElementById('search').addEventListener('input',function(){
+  searchQ=this.value.toLowerCase().trim();
+  document.getElementById('search-clear').style.display=this.value?'block':'none';
+  updateCount();draw();
+});
+function clearSearch(){
+  var s=document.getElementById('search');
+  s.value='';searchQ='';
+  document.getElementById('search-clear').style.display='none';
+  updateCount();draw();s.focus();
+}
+window.clearSearch=clearSearch;
+
+function isVis(a){
+  var hOk=activeH==='all'||a.hips.some(function(h){return h.startsWith(activeH);});
+  var vOk=activeI==='all'||a.imp===activeI;
+  var sOk=!searchQ||a.searchText.indexOf(searchQ)>=0;
+  return hOk&&vOk&&sOk;
+}
+function updateCount(){
+  var vis=arts.filter(isVis);
+  document.getElementById('cnt').textContent=vis.length+' artículos';
+}
+function hBlock(h){return h.replace(/[a-z]+$/,'')||h;}
+
+// REVIEWED COUNTER
+function updateRevCounter(){
+  var tot=arts.length;var n=reviewed.size;
+  document.getElementById('rev-cnt').textContent='✓ '+n+' / '+tot+' revisados';
+  document.getElementById('rev-fill').style.width=Math.round(n/tot*100)+'%';
+}
+document.getElementById('rev-reset').onclick=function(){reviewed.clear();updateRevCounter();draw();if(bpanelAH)openBPanel(bpanelAH);};
+function toggleReview(artId){if(reviewed.has(artId))reviewed.delete(artId);else reviewed.add(artId);updateRevCounter();}
+
+function handleClick(mx,my){
+  for(var i=arts.length-1;i>=0;i--){
+    var a=arts[i];if(!isVis(a))continue;
+    var dx=mx-wx(a.x),dy=my-wy(a.y),rr=sr(AR);
+    if(dx*dx+dy*dy<rr*rr){
+      selectedArt=a;toggleReview(a.id);
+      if(bpanelAH)openBPanel(bpanelAH);
+      openModal(a);draw();return;
+    }
+  }
+  selectedArt=null;draw();
+}
+var bpanelAH=null;
+function openBPanel(h){
+  bpanelAH=h;
+  var info=BLOCK_INFO[h];if(!info)return;
+  var col=info.color;
+  document.getElementById('bp-title').innerHTML='<span style="color:'+col+'">'+info.title+'</span>';
+  var blockArts=arts.filter(function(a){return a.hips.some(function(x){return x.startsWith(h);});});
+  var alta=blockArts.filter(function(a){return a.imp==='ALTA';}).length;
+  var media=blockArts.filter(function(a){return a.imp==='MEDIA';}).length;
+  var baja=blockArts.filter(function(a){return a.imp==='BAJA';}).length;
+  var rev=blockArts.filter(function(a){return reviewed.has(a.id);}).length;
+  document.getElementById('bp-sub').innerHTML='<em>'+blockArts.length+' artículos &nbsp;·&nbsp; revisados: '+rev+'/'+blockArts.length+'</em>';
+  var body='<div class="bsec" style="margin-top:0">Descripción</div><div class="bval">'+info.desc+'</div>';
+  body+='<div class="bsec">Hipótesis del bloque</div>';
+  info.hyps.forEach(function(hy){
+    body+='<div class="bsub"><b style="color:'+col+'">'+hy.id+'</b> — '+hy.lbl+'</div>';
+    body+='<div class="bval" style="margin-bottom:4px;padding-left:8px;border-left:2px solid '+ha(col,0.3)+'">'+hy.desc+'</div>';
+  });
+  body+='<div class="bsec">Escalas de medición</div><div class="bval">'+info.scales+'</div>';
+  body+='<div class="bsec">Artículos por importancia</div>';
+  body+='<div class="bval"><span style="color:#1a5fa8;font-weight:600">★ '+alta+' alta</span> &nbsp;·&nbsp; <span style="color:#7a5a10;font-weight:600">◆ '+media+' media</span> &nbsp;·&nbsp; <span style="color:#6a6060;font-weight:600">· '+baja+' baja</span></div>';
+  body+='<div class="bsec">Artículos incluidos</div>';
+  blockArts.sort(function(a,b){return a.año-b.año;}).forEach(function(a){
+    var cls=a.imp==='ALTA'?'si':a.imp==='MEDIA'?'mat':'pre';
+    var isRev=reviewed.has(a.id);
+    body+='<div class="bitem '+cls+(isRev?' reviewed':'')+'"><b>'+a.autor+' ('+a.año+')</b><br><span style="font-size:9px;color:#6a5a40">'+a.met+'</span>'+(isRev?' <span style="color:#2a8a4a;font-size:9px">✓</span>':'')+'</div>';
+  });
+  body+='<div class="bsec">Nota teórica</div><div class="bval" style="font-style:italic;color:#6a5a40">'+info.note+'</div>';
+  document.getElementById('bp-body').innerHTML=body;
+  document.getElementById('bp-body').scrollTop=0;
+  document.getElementById('bpanel').classList.add('open');
+}
+function closeBPanel(){document.getElementById('bpanel').classList.remove('open');bpanelAH=null;}
+window.closeBPanel=closeBPanel;
+
+// MODAL
+function openModal(a){
+  modalArt=a;
+  document.getElementById('m-autor').textContent=a.autor+' ('+a.año+')';
+  document.getElementById('m-sub').innerHTML='<em>'+a.ctx+'</em>';
+  updateModalRevBtn(a);
+  var htags=a.hips.map(function(h){var col=BC[hBlock(h)]||BC[h]||'#888';return '<span class="mhip" style="color:'+col+';border-color:'+ha(col,0.4)+'">'+h+'</span>';}).join('');
+  document.getElementById('m-body').innerHTML=
+    '<div id="m-full">'+
+      '<div class="ms">Referencia bibliográfica</div>'+
+      '<div class="mref">'+a.ref+'</div>'+
+    '</div>'+
+    '<div id="m-full" style="border-bottom:1px solid #f0ece0;padding-bottom:8px;margin-bottom:0">'+
+      '<div class="ms">Metodología</div><div class="mv">'+a.met+'</div>'+
+    '</div>'+
+    '<div>'+
+      '<div class="ms">Resumen del estudio</div><div class="mv">'+a.res+'</div>'+
+      '<div class="ms">Hallazgos principales</div><div class="mv">'+a.hallazgos+'</div>'+
+    '</div>'+
+    '<div>'+
+      '<div class="ms">Ítems del TFG cubiertos</div><div class="mv">'+a.items+'</div>'+
+      '<div class="ms">Por qué vale / Precaución</div><div class="mv">'+a.just+'</div>'+
+    '</div>'+
+    '<div id="m-full">'+
+      '<div class="ms">Hipótesis cubiertas</div>'+
+      '<div class="mhips">'+htags+'</div>'+
+      '<div><span class="mver '+ICS[a.imp]+'">'+ILB[a.imp]+'</span></div>'+
+      (a.multi?'<div style="margin-top:6px;font-size:10px;color:#7a6a50;font-style:italic">⚡ Múltiples hipótesis: sus conexiones se resaltan en el mapa.</div>':'')+
+    '</div>';
+  document.getElementById('m-body').scrollTop=0;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function updateModalRevBtn(a){
+  var btn=document.getElementById('m-rev-btn');
+  var isRev=reviewed.has(a.id);
+  if(isRev){
+    btn.textContent='↺ Desmarcar revisado';
+    btn.style.color='#6a5a40';btn.style.borderColor='#c8bfa8';btn.style.background='#f5f0e5';
+  } else {
+    btn.textContent='✓ Marcar como revisado';
+    btn.style.color='#1a6e3a';btn.style.borderColor='#a8d8b8';btn.style.background='#eef8f1';
+  }
+}
+
+window.toggleReviewedFromModal=function(){
+  if(!modalArt)return;
+  toggleReview(modalArt.id);
+  updateModalRevBtn(modalArt);
+  if(bpanelAH)openBPanel(bpanelAH);
+  draw();
+};
+
+function closeModal(){document.getElementById('overlay').classList.remove('show');modalArt=null;selectedArt=null;draw();}
+window.closeModal=closeModal;
+window.handleOverlayClick=function(e){if(e.target===document.getElementById('overlay'))closeModal();};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+
+function handleClick(mx,my){
+  var AR=40;
+  for(var i=arts.length-1;i>=0;i--){
+    var a=arts[i];if(!isVis(a))continue;
+    var dx=mx-wx(a.x),dy=my-wy(a.y),rr=sr(AR);
+    if(dx*dx+dy*dy<rr*rr){
+      selectedArt=a;
+      toggleReview(a.id);
+      if(bpanelAH)openBPanel(bpanelAH);
+      openModal(a);draw();return;
+    }
+  }
+  selectedArt=null;draw();
+}
+
+function updateHover(mx,my){
+  var prevA=hoveredArt,prevH=hoveredHN;
+  hoveredArt=null;hoveredHN=null;
+  // Check HN first (on top)
+  hoveredHN=hitHN(mx,my);
+  if(!hoveredHN){
+    for(var i=arts.length-1;i>=0;i--){
+      var a=arts[i];if(!isVis(a))continue;
+      var dx=mx-wx(a.x),dy=my-wy(a.y),rr=sr(AR+6);
+      if(dx*dx+dy*dy<rr*rr){hoveredArt=a;break;}
+    }
+  }
+  if(hoveredArt!==prevA||hoveredHN!==prevH)draw();
+  var hl=document.getElementById('hlabel');
+  if(hoveredHN){
+    hl.textContent=hoveredHN.lbl.join(' ')+' — clic · seleccionar, arrastrar · mover';
+    var tx=Math.min(mx+14,W-300),ty=Math.max(50,my-28);
+    hl.style.left=tx+'px';hl.style.top=ty+'px';hl.style.display='block';
+  } else if(hoveredArt){
+    var isRev=reviewed.has(hoveredArt.id);
+    hl.textContent=hoveredArt.autor+' ('+hoveredArt.año+')'+(isRev?' ✓':'')+' — clic · detalle, arrastrar · mover';
+    var tx2=Math.min(mx+14,W-300),ty2=Math.max(50,my-28);
+    hl.style.left=tx2+'px';hl.style.top=ty2+'px';hl.style.display='block';
+  } else hl.style.display='none';
+}
+
+// DRAW
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#f4f0e8';ctx.fillRect(0,0,W,H);
+  // Grid
+  if(SC>0.18){
+    var gs=60*SC,ox=((TX%gs)+gs)%gs,oy=((TY%gs)+gs)%gs;
+    ctx.strokeStyle='rgba(0,0,0,.032)';ctx.lineWidth=0.5;
+    for(var gx=ox;gx<W;gx+=gs){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(var gy=oy;gy<H;gy+=gs){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+  }
+  // Helper: is this HN id "active" (selected or hovered)?
+  var actHN=selectedHN||hoveredHN;
+  // Which HN ids are "lit" (connected to the active one)?
+  var litIds={};
+  if(actHN){
+    litIds[actHN.id]=true;
+    // sub-link connections — mark the other end
+    var subDef=[['H1a','H1'],['H1b','H1'],['H1c','H1'],['H1d','H1'],['H1e','H1'],['H2a','H2'],['H2b','H2'],['H2c','H2'],['FP','H3'],['PP','H3'],['H3a','H3'],['H3b','H3'],['CAL','H4'],['RP','H4'],['H4a','H4'],['H4b','H4']];
+    subDef.forEach(function(sl){if(sl[0]===actHN.id||sl[1]===actHN.id){litIds[sl[0]]=true;litIds[sl[1]]=true;}});
+    // flow connections
+    var flowDef=[['H1','H3'],['H3','H2'],['H2','H4'],['H4','SP']];
+    flowDef.forEach(function(fl){if(fl[0]===actHN.id||fl[1]===actHN.id){litIds[fl[0]]=true;litIds[fl[1]]=true;}});
+  }
+
+  // Sub-links dashed
+  var subL=[['H1a','H1'],['H1b','H1'],['H1c','H1'],['H1d','H1'],['H1e','H1'],['H2a','H2'],['H2b','H2'],['H2c','H2'],['FP','H3'],['PP','H3'],['H3a','H3'],['H3b','H3'],['CAL','H4'],['RP','H4'],['H4a','H4'],['H4b','H4']];
+  subL.forEach(function(sl){
+    var na=hMap[sl[0]],nb=hMap[sl[1]],col=BC[hBlock(sl[1])]||'#888';
+    var isLit=actHN&&(litIds[sl[0]]&&litIds[sl[1]]);
+    var op=isLit?0.85:actHN?0.08:0.25;
+    var lw=isLit?2.8:1;
+    ctx.save();
+    if(!isLit)ctx.setLineDash([5*SC,3.5*SC]);
+    ctx.strokeStyle=ha(col,op);ctx.lineWidth=lw*SC;
+    ctx.beginPath();ctx.moveTo(wx(na.x),wy(na.y));ctx.lineTo(wx(nb.x),wy(nb.y));ctx.stroke();
+    ctx.restore();
+    // Arrowhead on lit sub-links
+    if(isLit){
+      var x1=wx(na.x),y1=wy(na.y),x2=wx(nb.x),y2=wy(nb.y);
+      var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+      if(len>0){var ux=dx/len,uy=dy/len,ex=x2-ux*sr(nb.r*ovalRx(nb)),ey=y2-uy*sr(nb.r);
+        var ah=6*SC,ab=3*SC;ctx.fillStyle=ha(col,0.75);
+        ctx.beginPath();ctx.moveTo(ex+ux*ah,ey+uy*ah);ctx.lineTo(ex-uy*ab,ey+ux*ab);ctx.lineTo(ex+uy*ab,ey-ux*ab);ctx.closePath();ctx.fill();}
+    }
+  });
+
+  // Main flow arrows
+  var flows=[['H1','H3',BC.H3],['H3','H2',BC.H3],['H2','H4',BC.H4],['H4','SP',BC.SP]];
+  flows.forEach(function(fl){
+    var na=hMap[fl[0]],nb=hMap[fl[1]],col=fl[2];
+    var isLit=actHN&&(litIds[fl[0]]&&litIds[fl[1]]);
+    var nary=sr(na.r),narx=nary*ovalRx(na),nbry=sr(nb.r),nbrx=nbry*ovalRx(nb);
+    var x1=wx(na.x)+narx,y1=wy(na.y),x2=wx(nb.x)-nbrx,y2=wy(nb.y);
+    var op=isLit?0.95:actHN?0.12:0.6;
+    var lw=isLit?4.5:2.8;
+    ctx.strokeStyle=ha(col,op);ctx.lineWidth=lw*SC;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy),ux=dx/len,uy=dy/len;
+    var ah=(isLit?11:8)*SC,ab=(isLit?5.5:4)*SC;
+    ctx.fillStyle=ha(col,isLit?1:0.8);
+    ctx.beginPath();ctx.moveTo(x2+ux*ah,y2+uy*ah);ctx.lineTo(x2-uy*ab,y2+ux*ab);ctx.lineTo(x2+uy*ab,y2-ux*ab);ctx.closePath();ctx.fill();
+  });
+  // Article connection lines
+  arts.forEach(function(a){
+    if(!isVis(a))return;
+    var isSel=selectedArt&&selectedArt.id===a.id;
+    var isHov=hoveredArt&&hoveredArt.id===a.id;
+    var isRev=reviewed.has(a.id);
+    var artConnectedToHN=actHN&&a.hips.some(function(h){return litIds[h]||h===actHN.id;});
+    a.hips.forEach(function(h){
+      var th=hMap[h];if(!th)return;
+      var col=BC[hBlock(h)]||BC[h]||'#888';
+      var isPrim=a.prim.indexOf(h)>=0;
+      var op,lw;
+      if(isSel){op=isPrim?0.82:0.52;lw=isPrim?4.5:2.8;}
+      else if(isHov){op=isPrim?0.62:0.32;lw=isPrim?3.5:2.0;}
+      else if(actHN){
+        if(artConnectedToHN){op=isPrim?0.52:0.22;lw=isPrim?2.4:1.2;}
+        else{op=0.03;lw=0.4;}
+      }
+      else if(selectedArt){op=0.03;lw=0.4;}
+      else if(isRev){op=isPrim?0.12:0.05;lw=isPrim?0.8:0.4;}
+      else{op=isPrim?0.2:0.07;lw=isPrim?1.3:0.6;}
+      ctx.strokeStyle=ha(col,op);ctx.lineWidth=lw*SC;
+      var x1=wx(a.x),y1=wy(a.y),x2=wx(th.x),y2=wy(th.y);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.bezierCurveTo(x1+(x2-x1)*.45,y1,x1+(x2-x1)*.55,y2,x2,y2);ctx.stroke();
+      if(isSel&&!isPrim){
+        var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+        if(len>0){var ux=dx/len,uy=dy/len,ex=x2-ux*sr(th.r+8),ey=y2-uy*sr(th.r+8);
+          var ah=6*SC,ab=3*SC;ctx.fillStyle=ha(col,0.65);
+          ctx.beginPath();ctx.moveTo(ex+ux*ah,ey+uy*ah);ctx.lineTo(ex-uy*ab,ey+ux*ab);ctx.lineTo(ex+uy*ab,ey-ux*ab);ctx.closePath();ctx.fill();}
+      }
+    });
+  });
+
+  // ── HYPOTHESIS NODES — OVALS ──
+  HN.forEach(function(n){
+    var x=wx(n.x),y=wy(n.y),ry=sr(n.r),rx=ry*ovalRx(n);
+    var isSN=selectedHN&&selectedHN.id===n.id;
+    var isHN=hoveredHN&&hoveredHN.id===n.id;
+    var isLitN=actHN&&litIds[n.id];
+    // Glow
+    if(n.t==='main'||n.t==='out'){ctx.shadowColor=ha(n.c,isSN?0.45:0.22);ctx.shadowBlur=(isSN?38:24)*SC;}
+    if(isSN){ctx.shadowColor=ha(n.c,0.5);ctx.shadowBlur=40*SC;}
+    // Fill — brighter when selected
+    ctx.fillStyle=isSN?ha(n.c,0.28):isHN?ha(n.c,0.2):actHN&&!isLitN?ha(n.bg||'#fff',0.5):n.bg||'#fff';
+    ctx.strokeStyle=n.c;
+    var baseW=(n.t==='main'||n.t==='out'?3:n.t==='rel'?2.2:1.8);
+    ctx.lineWidth=(isSN?baseW*2.2:isHN?baseW*1.6:actHN&&!isLitN?baseW*0.5:baseW)*SC;
+    ctx.globalAlpha=actHN&&!isLitN?0.28:1;
+    if(n.t==='mod'){ctx.save();ctx.setLineDash([5*SC,2.5*SC]);}
+    ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    if(n.t==='mod')ctx.restore();
+    ctx.shadowBlur=0;ctx.globalAlpha=1;
+    // Outer ring for main/out + selected
+    if(n.t==='main'||n.t==='out'){
+      ctx.strokeStyle=ha(n.c,isSN?0.6:0.28);ctx.lineWidth=(isSN?1.8:0.9)*SC;
+      ctx.beginPath();ctx.ellipse(x,y,rx+9*SC,ry+9*SC,0,0,Math.PI*2);ctx.stroke();
+    }
+    if(isSN){
+      // Second outer ring for selected state
+      ctx.strokeStyle=ha(n.c,0.35);ctx.lineWidth=0.8*SC;
+      ctx.setLineDash([6*SC,3*SC]);
+      ctx.beginPath();ctx.ellipse(x,y,rx+16*SC,ry+16*SC,0,0,Math.PI*2);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // Article count badge
+    var cnt=hCount[n.id];
+    if(cnt>0&&SC>0.25&&n.t!=='out'){
+      var br=11*SC,bx=x+rx*0.8,by=y-ry*0.82;
+      ctx.fillStyle=n.c;ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font='600 '+(8*SC)+'px Georgia';ctx.fillText(cnt,bx,by);
+    }
+    // Label — big and bold so the model dominates visually
+    var fs=n.t==='main'||n.t==='out'?25:n.t==='rel'?21:17;
+    var fw='700';
+    ctx.fillStyle=n.c;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font=fw+' '+(fs*SC)+'px Georgia';
+    var lh=(fs+4.5)*SC,yo=-(n.lbl.length-1)*lh/2;
+    n.lbl.forEach(function(l,i){ctx.fillText(l,x,y+yo+i*lh);});
+  });
+
+  // ── ARTICLE NODES — CIRCLES ──
+  arts.forEach(function(a){
+    var vis=isVis(a),isSel=selectedArt&&selectedArt.id===a.id,isHov=hoveredArt&&hoveredArt.id===a.id;
+    var isRev=reviewed.has(a.id);
+    var x=wx(a.x),y=wy(a.y),r=sr(AR);
+    var fadedBySearch=!vis;
+    var fadedBySel=selectedArt&&!isSel&&!isHov;
+    var artConnectedToHN2=actHN&&a.hips.some(function(h){return litIds[h]||h===actHN.id;});
+    var fadedByHN=actHN&&!artConnectedToHN2&&!isSel&&!isHov;
+    ctx.globalAlpha=fadedBySearch?0.04:fadedBySel||fadedByHN?0.13:1;
+    // Multi outer ring
+    if(a.multi){
+      ctx.save();ctx.setLineDash([4*SC,2.5*SC]);
+      ctx.strokeStyle=ha('#7a5a10',isSel?0.9:isRev?0.25:0.45);ctx.lineWidth=(isSel?1.5:0.8)*SC;
+      ctx.beginPath();ctx.arc(x,y,r+6*SC,0,Math.PI*2);ctx.stroke();ctx.restore();
+    }
+    // Color accent arc
+    var acol=BC[hBlock(a.pH)]||'#888';
+    var arc2=2*Math.PI*(r+4*SC);
+    ctx.save();ctx.setLineDash([arc2*0.38,arc2*0.62]);
+    ctx.strokeStyle=ha(acol,isRev?0.25:isSel?0.9:0.55);ctx.lineWidth=(isSel?1.8:1.3)*SC;
+    ctx.beginPath();ctx.arc(x,y,r+4*SC,-Math.PI/2,Math.PI*2*1.5);ctx.stroke();ctx.restore();
+    // Fill
+    ctx.fillStyle=isRev?'#dcd8d0':isSel?'#fffcf5':'#fff';
+    ctx.strokeStyle=isRev?ha(ICL[a.imp]||'#888',0.45):ICL[a.imp]||'#888';
+    ctx.lineWidth=(isSel?3.2:a.multi?2.4:1.8)*SC;
+    ctx.shadowColor=isSel?'rgba(0,0,0,.16)':'rgba(0,0,0,.07)';ctx.shadowBlur=(isSel?14:5)*SC;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.shadowBlur=0;
+    // Hover ring
+    if(isHov&&!isSel){ctx.strokeStyle=ha('#7a5a10',0.32);ctx.lineWidth=SC*0.8;ctx.beginPath();ctx.arc(x,y,r+9*SC,0,Math.PI*2);ctx.stroke();}
+    // Labels
+    if(SC>0.12){
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      var at=a.autor.split(' et al.')[0].split(' &')[0].split(',')[0].trim();
+      if(at.length>13)at=at.slice(0,12)+'…';
+      ctx.fillStyle=isRev?'rgba(80,70,60,.6)':isSel?'#1a1814':'#2a2018';
+      ctx.font=(isSel?'700':'600')+' '+(15*SC)+'px Georgia';
+      ctx.fillText(at,x,y-10*SC);
+      ctx.fillStyle=isRev?ha(ICL[a.imp]||'#888',0.5):ICL[a.imp]||'#888';
+      ctx.font='700 '+(18*SC)+'px Georgia';
+      ctx.fillText(a.año,x,y+10*SC);
+      if(SC>0.22){
+        var ht=a.hips.slice(0,3).join('·')+(a.hips.length>3?'…':'');
+        ctx.fillStyle=isRev?'rgba(90,75,55,.4)':'rgba(90,75,55,.85)';ctx.font=(11*SC)+'px Georgia';
+        ctx.fillText(ht,x,y+27*SC);
+      }
+      if(a.multi){ctx.fillStyle=isRev?ha('#8a6a20',0.4):'#8a6a20';ctx.font=(13*SC)+'px Georgia';ctx.fillText('⚡',x+r-4*SC,y-r+10*SC);}
+      // Reviewed checkmark
+      if(isRev&&SC>0.18){ctx.fillStyle='rgba(42,138,74,.75)';ctx.font='700 '+(14*SC)+'px Georgia';ctx.fillText('✓',x-r+7*SC,y-r+12*SC);}
+    }
+    ctx.globalAlpha=1;
+  });
+}
+draw();updateRevCounter();
+
+// ── EXPORT POSITIONS ──────────────────────────────────────────────────────────
+function openExport(){
+  document.getElementById('exp-title').textContent='Exportar posiciones de artículos';
+  document.getElementById('exp-sub').textContent='Copia este bloque y pégalo donde se indica en el código (o envíaselo a Claude para aplicarlo).';
+  var lines=['var fixedPositions={'];
+  arts.forEach(function(a,i){
+    var comma=i<arts.length-1?',':'';
+    lines.push('  '+a.id+':{x:'+Math.round(a.x)+',y:'+Math.round(a.y)+'}'+comma+
+      '  // '+a.autor+' ('+a.año+') — '+a.pH);
+  });
+  lines.push('};');
+  document.getElementById('exp-ta').value=lines.join('\n');
+  document.getElementById('exp-overlay').classList.add('show');
+}
+function openExportHN(){
+  document.getElementById('exp-title').textContent='Exportar posiciones del modelo teórico';
+  document.getElementById('exp-sub').textContent='Arrastra los óvalos a la posición deseada, luego copia este bloque y envíaselo a Claude para aplicarlo.';
+  var lines=['var fixedHNPositions={'];
+  HN.forEach(function(n,i){
+    var comma=i<HN.length-1?',':'';
+    lines.push('  '+JSON.stringify(n.id)+':{x:'+Math.round(n.x)+',y:'+Math.round(n.y)+'}'+comma+
+      '  // '+n.lbl.join(' ')+' ('+n.t+')');
+  });
+  lines.push('};');
+  document.getElementById('exp-ta').value=lines.join('\n');
+  document.getElementById('exp-overlay').classList.add('show');
+}
+function closeExport(){document.getElementById('exp-overlay').classList.remove('show');}
+function copyExport(){
+  var ta=document.getElementById('exp-ta');
+  ta.select();
+  document.execCommand('copy');
+  var btn=document.getElementById('exp-copy');
+  btn.textContent='¡Copiado!';
+  setTimeout(function(){btn.textContent='Copiar al portapapeles';},1800);
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeExport();
+});
+// ─────────────────────────────────────────────────────────────────────────────
+</script>
+</body>
+</html>
