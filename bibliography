@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Mapa_Bibliografía_TFG</title>
+<title>Revisión de la literatura</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#f4f0e8;font-family:'Georgia',serif;color:#1a1814}
@@ -106,7 +106,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f4f0e8;font-family:
 <body>
 <div id="hdr">
   <div id="hdr-row1">
-    <span id="htitle">Mapa_Bibliografía_TFG</span>
+    <span id="htitle">Revisión de la literatura</span>
     <div class="hgrp">
       <span class="hlab">Hipótesis:</span>
       <button class="fb on" data-h="all">Todos</button>
