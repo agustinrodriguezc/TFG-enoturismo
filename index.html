@@ -101,6 +101,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f4f0e8;font-family:
 #exp-close{color:#6a5a40;border-color:#c8bfa8;background:#faf8f3}
 #exp-close:hover{background:#f0ece0}
 /* EXPORT BUTTON in header */
+.expb{padding:4px 9px;border-radius:2px;font-size:11px;font-family:'Georgia',serif;cursor:pointer;border:1px solid #4a8060;color:#4a8060;background:#f0f8f4;white-space:nowrap}
+.expb:hover{background:#d8efe6}
 </style>
 </head>
 <body>
@@ -126,11 +128,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#f4f0e8;font-family:
       <input id="search" placeholder="Buscar autor, año, keyword…" autocomplete="off" style="width:145px;padding-right:22px">
       <span id="search-clear" onclick="clearSearch()" style="position:absolute;right:5px;cursor:pointer;font-size:11px;color:#9a8870;display:none;line-height:1;padding:2px">✕</span>
     </div>
-    <span id="cnt">56 artículos</span>
+    <span id="cnt">60 artículos</span>
     <div id="rev-info">
-      <span id="rev-cnt">✓ 0 / 56 revisados</span>
+      <span id="rev-cnt">✓ 0 / 60 revisados</span>
       <div id="rev-bar"><div id="rev-fill"></div></div>
       <button id="rev-reset">↺ Resetear</button>
+    </div>
+    <div class="hgrp" style="margin-left:6px">
+      <button class="expb" onclick="openExport()" title="Exportar posiciones de artículos">⤓ Layout</button>
+      <button class="expb" onclick="openExportHN()" title="Exportar posiciones del modelo teórico">⤓ Modelo</button>
     </div>
   </div>
 </div>
@@ -637,6 +643,38 @@ var AD=[
    'H4b: lealtad modera confianza → satisfacción con SEM multigrupo.',
    'Matiz: contexto de productos tecnológicos, diferente de enoturismo. El mecanismo moderador con SEM multigrupo está correctamente identificado pero requiere cautela en la generalización.',
    'Ramachandran, S., & Balasubramanian, K. (2020). Customer loyalty and trust: A multigroup moderating analysis. Journal of Relationship Marketing, 19(3), 212–234.'],
+  [57,'Marinao Artigas et al.',2015,'H1',['H1','H1a','H1b','H1c','H1d','H1e','H4'],['H1'],'MEDIA',
+   'SEM covarianza (AMOS SPSS 19) + análisis de mediación (Baron & Kenny, 1986) con tests Sobel, Aroian y Goodman. EFA + CFA previos. Muestra no probabilística por cuotas (n=750, destinos chilenos)',
+   'Turismo general (Chile)',
+   'Propone y testa un modelo causal en el que el beneficio hedónico actúa como mediador entre la satisfacción turística y sus antecedentes —beneficio funcional, beneficio simbólico y evaluación afectiva—, siendo todos ellos consecuencia de la percepción cognitiva del destino.',
+   'El beneficio hedónico tiene efecto directo y positivo sobre la satisfacción (β=0.96; p<0.001; R²=0.57). Beneficio funcional (β=0.66), simbólico (β=0.15) y evaluación afectiva (β=0.13) predicen el beneficio hedónico (R²=0.76). La percepción cognitiva predice BF (β=0.50), BS (β=0.37) y EA (β=0.40). Cargas factoriales de todos los ítems superiores a 0.76, varianzas explicadas entre 68% y 76%.',
+   'H1 transversal principal: valida empíricamente con SEM las cinco dimensiones de imagen del TFG como constructos distintos y medibles (Pcog=PC, Eafe=EA, Bfun=BF, Bhed=HP, Bsim=BS). Equivalencia completa con los cinco constructos del bloque H1. H4: beneficio hedónico → satisfacción (β=0.96), la variable dependiente final del TFG. Cadena de autoría 2015→2017→2023→2025→TFG: establece los constructos fundacionales.',
+   '⚠️ Revista no indexada en JCR ni Scopus Q1 (International Journal of Business and Social Science). Usar como referencia de apoyo conceptual dentro de la cadena de autoría Marinao-Artigas, no como referencia primaria. Su valor es la trazabilidad conceptual y la validación de constructos, no el impacto bibliométrico.',
+   'Marinao Artigas, E., Chasco, C., & Valencia Pozo, V. (2015). Benefit perceived by tourists. Role of the hospitality offered by the tourist destination. International Journal of Business and Social Science, 6(2), 53–64. https://doi.org/10.1057/s41599-025-05803-x'],
+  [58,'Marinao-Artigas et al.',2023,'H2',['H2','H3','H4'],['H2','H4'],'ALTA',
+   'SEM covarianza (AMOS SPSS v.25) + análisis multigrupo Chile-España. Muestra no probabilística (n=1.058: 608 Santiago + 450 Madrid)',
+   'Retail de lujo (Chile-España)',
+   'Examina el papel de la confianza multidimensional de una marca de lujo como antecedente de la satisfacción del consumidor y como consecuencia de la reputación y la familiaridad, a su vez determinadas por las experiencias cognitiva y afectiva del consumidor.',
+   'La confianza multidimensional tiene efecto directo y positivo sobre la satisfacción (β=0.80; R²=0.63; p<0.001). Reputación (β=0.07) y familiaridad (β=0.55) predicen la confianza (R²=0.98). Experiencia cognitiva predice reputación (β=0.58) y familiaridad (β=0.54). Experiencia afectiva predice reputación (β=0.22) y familiaridad (β=0.82). Análisis multigrupo: relación confianza→satisfacción invariante entre Chile y España.',
+   'H2 principal: confirma con CFA la estructura de segundo orden honestidad+benevolencia+competencia. Escala más próxima a TH, TB y TC del TFG. H3 (uso analógico): cadena experiencia cognitiva+afectiva→reputación+familiaridad→confianza equivalente a imagen→confianza del TFG. H4 principal: confianza→satisfacción (β=0.80), el coeficiente más alto de toda la revisión para esta relación.',
+   'Scopus (Cuadernos de Gestión, UPV/EHU). Contexto retail de lujo, no turismo —generalización legítima por invarianza cultural Chile-España confirmada con análisis multigrupo. Cadena de autoría: Marinao-Artigas (2017) → Marinao-Artigas (2023) → TFG.',
+   'Marinao-Artigas, E., Valenzuela-Fernández, L., Chasco, C., & Laroze-Prehn, D. (2023). Antecedents and consequences of trust as a multidimensional construct. Cross-country analysis in the luxury retail sector. Management Letters / Cuadernos de Gestión, 23(2), 51–68. https://doi.org/10.5295/cdg.211490em'],
+  [59,'Marinao-Artigas et al.',2025,'H3a',['H3','H3a','H2','H4','H4a'],['H3a','H4','H4a'],'ALTA',
+   'SEM covarianza (AMOS SPSS v.26) + tests de moderación bidireccionales (two-way interaction). Muestra no probabilística (n=1.801 ejecutivos de negocios, Santiago y Ciudad de México)',
+   'Turismo de negocios (Chile y México)',
+   'Verifica si componentes ambientales del destino de negocios y factores inherentes al comportamiento del turista actúan de forma diádica como drivers de lealtad. Testa el rol moderador de la familiaridad con el destino y las experiencias emocional y cognitiva sobre las relaciones calidad-reputación-confianza-satisfacción.',
+   'La cadena diádica calidad percibida↔reputación→confianza→satisfacción es el mejor soporte sinérgico para la lealtad del turista de negocios. La familiaridad modera reputación→confianza (β=0.024; SE=0.006; CR=3.72; p<0.001). La experiencia cognitiva modera satisfacción→confianza (β=0.620; CR=43.702; p<0.001). Confianza→satisfacción: β=0.91, el coeficiente más alto reportado en turismo de toda la revisión. Constructo "trusted city" con cargas λ=0.98 (honesta), λ=0.97 (benevolente), λ=0.98 (competente).',
+   'H3a principal: familiaridad modera reputación→confianza (β=0.024), respaldo más directo disponible en turismo para H3a. H3: reputación→confianza (β=0.65/0.78). H2: estructura tridimensional honest+benevolent+competent city con métricas de ajuste óptimas (IFI=0.996; RMSEA=0.045). H4 principal: confianza→satisfacción β=0.91, el más alto reportado en turismo. H4a: experiencia cognitiva (≡CAL) modera satisfacción→confianza (β=0.620).',
+   'Scopus Q1 (Review of Managerial Science, Springer). Turismo de negocios, no enoturismo —los constructos operan a nivel cognitivo y relacional independientemente del tipo de turismo. Referencia MÁS SÓLIDA de toda la revisión para H3a y H4a. Combinar con Lee et al. (2022) y Gómez-Carmona et al. (2023) para validación específica en enoturismo.',
+   'Marinao-Artigas, E., Barajas-Portas, K., & Valenzuela-Fernandez, L. (2025). Antecedents of business tourist loyalty: the moderating role of familiarity and emotional and cognitive experiences. Review of Managerial Science. https://doi.org/10.1007/s11846-025-00852-7'],
+  [60,'Marinao Artigas et al.',2014,'H3a',['H3a','H1','H4'],['H3a'],'ALTA',
+   'SEM covarianza (AMOS SPSS 18) + análisis de mediación (Baron & Kenny, 1986) con tests Sobel, Aroian y Goodman. EFA + CFA previos. Muestra no probabilística por cuotas (n=750, destinos chilenos)',
+   'Turismo general (Chile)',
+   'Prueba que la satisfacción obtenida por el turista es consecuencia del beneficio funcional, hedónico y simbólico percibido en el destino, y que la satisfacción es a su vez antecedente de la familiaridad con el lugar. Testa también el rol mediador de la satisfacción entre beneficios y familiaridad.',
+   'La satisfacción tiene efecto directo y positivo sobre la familiaridad (β=0.55; p<0.001; R²=0.30). Beneficio funcional (β=0.63), hedónico (β=0.18) y simbólico (β=0.13) predicen la satisfacción (R²=0.74). La satisfacción cumple un rol mediador entre beneficios percibidos y familiaridad. Los autores concluyen: "La satisfacción cumple un importante rol mediador entre la percepción de beneficios del turista y la familiaridad del lugar."',
+   'H3a principal: satisfacción→familiaridad (β=0.55) cierra el círculo del modelo: satisfacción acumulada genera familiaridad, que a su vez modera imagen→confianza (H3a). H1: valida con SEM los constructos BF, HP y BS como dimensiones distintas y medibles (cargas factoriales >0.62, varianzas 73–75%). H4: centralidad de SP como nodo que conecta beneficios percibidos con comportamientos posteriores.',
+   '⚠️ HALLAZGO EXCEPCIONAL — LAGUNA QUE EL TFG RESPONDE DIRECTAMENTE: los propios autores proponen en sus líneas futuras estudiar "el impacto de la satisfacción como variable mediadora, sobre otros factores de marketing, junto a la familiaridad, como por ejemplo, sobre la confianza del turista hacia el destino turístico." El TFG modela exactamente esa cadena. Argumento de originalidad de primer nivel ante el tutor. Scopus + WoS (RAE-FGV). Paper más antiguo de la cadena Marinao-Artigas.',
+   'Marinao Artigas, E., Torres Moraga, E., & Chasco Yrigoyen, C. (2014). Satisfacción: determinante de la familiaridad del destino turístico. RAE - Revista de Administração de Empresas, 54(4), 393–404. https://doi.org/10.1590/S0034-759020140405'],
 ];
 
 var arts=AD.map(function(d){
@@ -654,7 +692,7 @@ var fixedPositions={
   2:{x:318,y:464},
   9:{x:571,y:278},
   15:{x:562,y:866},
-  55:{x:-87,y:353},
+  55:{x:-75,y:353},
   56:{x:739,y:180},
   22:{x:471,y:168},
   23:{x:2,y:4},
@@ -678,34 +716,38 @@ var fixedPositions={
   5:{x:775,y:727},
   7:{x:720,y:1139},
   26:{x:1306,y:167},
-  27:{x:1130,y:569},
+  27:{x:1184,y:581},
   33:{x:1402,y:385},
   30:{x:1171,y:28},
-  29:{x:1552,y:1},
-  28:{x:1741,y:85},
+  29:{x:1580,y:34},
+  28:{x:1732,y:129},
   31:{x:978,y:121},
   32:{x:1583,y:378},
-  38:{x:951,y:574},
-  39:{x:1006,y:1107},
+  38:{x:1014,y:581},
+  39:{x:1076,y:1035},
   40:{x:579,y:725},
   41:{x:772,y:425},
-  42:{x:817,y:907},
+  42:{x:777,y:891},
   43:{x:945,y:889},
   34:{x:1091,y:884},
-  35:{x:1318,y:784},
-  36:{x:1241,y:1044},
-  37:{x:1568,y:980},
+  35:{x:1311,y:707},
+  36:{x:1232,y:1007},
+  37:{x:1573,y:828},
   44:{x:1922,y:590},
   45:{x:2097,y:583},
   46:{x:1771,y:581},
-  47:{x:1924,y:1018},
-  48:{x:1390,y:915},
-  49:{x:1516,y:732},
-  50:{x:1717,y:948},
-  51:{x:2126,y:931},
-  52:{x:1879,y:824},
-  53:{x:2289,y:863},
-  54:{x:2346,y:729}
+  47:{x:1901,y:992},
+  48:{x:1563,y:712},
+  49:{x:1719,y:748},
+  50:{x:1722,y:929},
+  51:{x:2047,y:852},
+  52:{x:1877,y:826},
+  53:{x:2224,y:844},
+  54:{x:2182,y:727},
+  57:{x:867,y:602},
+  58:{x:1710,y:430},
+  59:{x:1283,y:874},
+  60:{x:865,y:1039}
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
